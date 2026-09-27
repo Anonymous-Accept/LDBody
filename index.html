@@ -3,1913 +3,498 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>LD-Motion | Calibrated Multi-View Human Motion Dataset</title>
-  <meta name="description" content="Project page for LD-Motion, a calibrated multi-view RGB-Vicon human-motion dataset for individuals with limb deficiency.">
-  <style>
-    :root {
-      --ink: #16191d;
-      --muted: #59636e;
-      --paper: #f5f6f2;
-      --panel: #ffffff;
-      --line: #d8ddd3;
-      --charcoal: #101418;
-      --teal: #1f756d;
-      --blue: #2d5f88;
-      --amber: #a96f16;
-      --green: #516f34;
-      --rose: #89445c;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      margin: 0;
-      background: var(--paper);
-      color: var(--ink);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.56;
-      letter-spacing: 0;
-    }
-
-    img,
-    video,
-    iframe {
-      display: block;
-      max-width: 100%;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .site-header {
-      position: sticky;
-      top: 0;
-      z-index: 30;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-      min-height: 64px;
-      padding: 12px 32px;
-      border-bottom: 1px solid rgba(16, 20, 24, 0.12);
-      background: rgba(245, 246, 242, 0.96);
-      backdrop-filter: blur(10px);
-    }
-
-    .brand {
-      display: grid;
-      gap: 2px;
-      min-width: 210px;
-      color: var(--charcoal);
-      font-weight: 850;
-    }
-
-    .brand span {
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 650;
-    }
-
-    .nav {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-      gap: 18px;
-      color: #35404a;
-      font-size: 14px;
-      font-weight: 720;
-    }
-
-    .nav a {
-      padding: 8px 0;
-      border-bottom: 2px solid transparent;
-    }
-
-    .nav a:hover,
-    .nav a:focus-visible {
-      color: var(--teal);
-      border-color: var(--teal);
-      outline: none;
-    }
-
-    .hero {
-      position: relative;
-      isolation: isolate;
-      min-height: 560px;
-      height: 78vh;
-      max-height: 780px;
-      display: grid;
-      align-items: end;
-      overflow: hidden;
-      color: #fff;
-      background: var(--charcoal);
-    }
-
-    .hero img {
-      position: absolute;
-      inset: 0;
-      z-index: -2;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      object-position: center;
-    }
-
-    .hero::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-      background: rgba(8, 10, 12, 0.64);
-    }
-
-    .wrap {
-      width: min(1160px, calc(100% - 48px));
-      margin: 0 auto;
-    }
-
-    .hero-content {
-      width: min(1160px, calc(100% - 48px));
-      margin: 0 auto;
-      padding: 72px 0 74px;
-    }
-
-    .eyebrow {
-      margin: 0 0 14px;
-      color: #bfe0da;
-      font-size: 13px;
-      font-weight: 850;
-      text-transform: uppercase;
-    }
-
-    h1,
-    h2,
-    h3,
-    p {
-      margin-top: 0;
-    }
-
-    h1 {
-      max-width: 940px;
-      margin-bottom: 18px;
-      font-size: 55px;
-      line-height: 1.04;
-      letter-spacing: 0;
-    }
-
-    .hero-copy {
-      max-width: 820px;
-      margin-bottom: 28px;
-      color: #eef3ef;
-      font-size: 18px;
-    }
-
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 42px;
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 850;
-    }
-
-    .button.primary {
-      background: #fff;
-      color: var(--charcoal);
-    }
-
-    .button.secondary {
-      border: 1px solid rgba(255, 255, 255, 0.55);
-      color: #fff;
-    }
-
-    .button:hover,
-    .button:focus-visible {
-      outline: 2px solid rgba(255, 255, 255, 0.5);
-      outline-offset: 2px;
-    }
-
-    .section {
-      padding: 74px 0;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .section.tint {
-      background: #ecefeb;
-    }
-
-    .section.dark {
-      background: var(--charcoal);
-      color: #f5f7f5;
-    }
-
-    .section-head {
-      display: grid;
-      grid-template-columns: minmax(0, 0.9fr) minmax(300px, 0.45fr);
-      gap: 36px;
-      align-items: end;
-      margin-bottom: 34px;
-    }
-
-    .kicker {
-      margin-bottom: 10px;
-      color: var(--teal);
-      font-size: 13px;
-      font-weight: 850;
-      text-transform: uppercase;
-    }
-
-    .dark .kicker {
-      color: #9ed5ce;
-    }
-
-    h2 {
-      margin-bottom: 0;
-      font-size: 35px;
-      line-height: 1.15;
-      letter-spacing: 0;
-    }
-
-    .section-head p,
-    .muted {
-      margin-bottom: 0;
-      color: var(--muted);
-    }
-
-    .section-copy {
-      width: 100%;
-      margin: -14px 0 28px;
-      color: var(--muted);
-    }
-
-    .dark .section-head p,
-    .dark .muted {
-      color: #bec8c5;
-    }
-
-    .metric-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .metric {
-      min-height: 124px;
-      padding: 20px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: var(--panel);
-    }
-
-    .metric strong {
-      display: block;
-      margin-bottom: 8px;
-      color: var(--charcoal);
-      font-size: 31px;
-      line-height: 1;
-    }
-
-    .metric span {
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .metric.teal {
-      border-top: 4px solid var(--teal);
-    }
-
-    .metric.blue {
-      border-top: 4px solid var(--blue);
-    }
-
-    .metric.amber {
-      border-top: 4px solid var(--amber);
-    }
-
-    .metric.green {
-      border-top: 4px solid var(--green);
-    }
-
-    .two-col {
-      display: grid;
-      grid-template-columns: minmax(0, 0.9fr) minmax(320px, 0.58fr);
-      gap: 34px;
-      align-items: start;
-    }
-
-    .lead {
-      color: #36414a;
-      font-size: 18px;
-    }
-
-    .body-list {
-      display: grid;
-      gap: 13px;
-      margin: 24px 0 0;
-      padding: 0;
-      list-style: none;
-    }
-
-    .body-list li {
-      position: relative;
-      padding-left: 18px;
-      color: #38434d;
-    }
-
-    .body-list li::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 11px;
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--teal);
-    }
-
-    .media-card {
-      overflow: hidden;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #fff;
-    }
-
-    .media-card img,
-    .media-card video,
-    .media-card iframe {
-      width: 100%;
-      aspect-ratio: 16 / 10;
-      object-fit: cover;
-      background: #d9ddd5;
-      border: 0;
-    }
-
-    .media-card.wide img,
-    .media-card.wide video,
-    .media-card.wide iframe {
-      aspect-ratio: 16 / 9;
-    }
-
-    .youtube-link {
-      position: relative;
-      display: block;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      overflow: hidden;
-      background: #111;
-    }
-
-    .youtube-link img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0.86;
-    }
-
-    .youtube-play {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      display: grid;
-      place-items: center;
-      width: 74px;
-      height: 52px;
-      border-radius: 8px;
-      background: #d92323;
-      color: #fff;
-      font-size: 24px;
-      font-weight: 850;
-      transform: translate(-50%, -50%);
-    }
-
-    .media-card.tall img {
-      aspect-ratio: 4 / 5;
-      object-fit: contain;
-      background: #f3f4f1;
-    }
-
-    figcaption,
-    .caption {
-      padding: 14px 16px 16px;
-      color: #4e5963;
-      font-size: 14px;
-    }
-
-    .dark .media-card {
-      border-color: rgba(255, 255, 255, 0.14);
-      background: rgba(255, 255, 255, 0.06);
-    }
-
-    .dark figcaption,
-    .dark .caption {
-      color: #cbd4d0;
-    }
-
-    .reviewer-panel {
-      display: grid;
-      grid-template-columns: minmax(0, 0.95fr) minmax(600px, 0.7fr);
-      gap: 28px;
-      align-items: start;
-      padding: 28px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #fff;
-      box-shadow: 0 14px 34px rgba(16, 20, 24, 0.07);
-    }
-
-    .reviewer-greeting {
-      margin-bottom: 10px;
-      color: var(--charcoal);
-      font-size: 18px;
-      font-weight: 850;
-    }
-
-    .reviewer-actions {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 14px;
-      margin-top: 24px;
-    }
-
-    .reviewer-actions span {
-      color: var(--muted);
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .button.download-button {
-      background: var(--charcoal);
-      color: #fff;
-    }
-
-    .button.download-button:hover,
-    .button.download-button:focus-visible {
-      outline: 2px solid rgba(31, 117, 109, 0.35);
-      outline-offset: 2px;
-    }
-
-    .package-list {
-      display: grid;
-      gap: 12px;
-    }
-
-    .package-list div {
-      padding: 16px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #f6f7f4;
-    }
-
-    .package-list strong {
-      display: block;
-      margin-bottom: 6px;
-      color: var(--charcoal);
-      font-size: 15px;
-    }
-
-    .package-list span {
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .paper-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .paper-card {
-      min-height: 210px;
-      padding: 22px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #fff;
-    }
-
-    .paper-card h3 {
-      margin-bottom: 10px;
-      color: var(--charcoal);
-      font-size: 18px;
-    }
-
-    .paper-card p {
-      margin-bottom: 0;
-      color: var(--muted);
-    }
-
-    .setup-grid,
-    .annotation-grid,
-    .mesh-grid,
-    .video-grid,
-    .gallery-grid {
-      display: grid;
-      gap: 16px;
-    }
-
-    .setup-grid {
-      grid-template-columns: minmax(260px, 0.45fr) minmax(0, 0.55fr);
-    }
-
-    .setup-facts {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .fact {
-      padding: 18px;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.06);
-    }
-
-    .fact strong {
-      display: block;
-      margin-bottom: 8px;
-      color: #fff;
-      font-size: 18px;
-    }
-
-    .fact span {
-      color: #cbd4d0;
-      font-size: 14px;
-    }
-
-    .annotation-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .annotation-grid .media-card:first-child {
-      grid-column: span 2;
-    }
-
-    .pipeline {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 28px;
-    }
-
-    .step {
-      min-height: 215px;
-      padding: 18px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #fff;
-    }
-
-    .step-number {
-      display: inline-grid;
-      place-items: center;
-      width: 32px;
-      height: 32px;
-      margin-bottom: 16px;
-      border-radius: 50%;
-      background: var(--charcoal);
-      color: #fff;
-      font-size: 13px;
-      font-weight: 850;
-    }
-
-    .step h3 {
-      margin-bottom: 10px;
-      font-size: 17px;
-      line-height: 1.25;
-    }
-
-    .step p {
-      margin-bottom: 0;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .mesh-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      margin-bottom: 26px;
-    }
-
-    .formula-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .formula {
-      padding: 20px;
-      border-left: 4px solid var(--blue);
-      border-radius: 8px;
-      background: #fff;
-      box-shadow: 0 10px 26px rgba(16, 20, 24, 0.06);
-    }
-
-    .formula h3 {
-      margin-bottom: 8px;
-      font-size: 16px;
-    }
-
-    code {
-      color: #203140;
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-      font-size: 0.92em;
-      overflow-wrap: anywhere;
-    }
-
-    .formula code {
-      display: block;
-      margin-bottom: 9px;
-      color: #172331;
-    }
-
-    .formula p {
-      margin-bottom: 0;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      border: 1px solid var(--line);
-      background: #fff;
-      font-size: 14px;
-    }
-
-    th,
-    td {
-      padding: 12px 13px;
-      border-bottom: 1px solid var(--line);
-      text-align: left;
-      vertical-align: top;
-    }
-
-    th {
-      background: #e8ece7;
-      color: #28313a;
-      font-weight: 850;
-    }
-
-    tr:last-child td {
-      border-bottom: 0;
-    }
-
-    .table-scroll {
-      overflow-x: auto;
-      border: 1px solid var(--line);
-      background: #fff;
-    }
-
-    .table-scroll table {
-      min-width: 1180px;
-      border: 0;
-    }
-
-    .benchmark-table th,
-    .benchmark-table td {
-      text-align: center;
-      white-space: nowrap;
-    }
-
-    .benchmark-table th:first-child,
-    .benchmark-table td:first-child {
-      text-align: left;
-    }
-
-    .benchmark-table .method-citation {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .benchmark-table .checkmark {
-      font-size: 18px;
-      font-weight: 850;
-    }
-
-    .benchmark-table .group-start td {
-      border-top: 2px solid var(--line);
-    }
-
-    .benchmark-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr);
-      gap: 18px;
-    }
-
-    .table-note {
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .video-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .video-stack {
-      display: grid;
-      gap: 22px;
-    }
-
-    .video-stack .media-card video {
-      height: auto;
-      aspect-ratio: auto;
-      object-fit: contain;
-    }
-
-    .paired-video-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-      padding: 12px;
-    }
-
-    .paired-video-module {
-      overflow: hidden;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      background: #f3f4f1;
-    }
-
-    .paired-video-module video {
-      width: 100%;
-      height: auto;
-      aspect-ratio: auto;
-      object-fit: contain;
-    }
-
-    .paired-video-label {
-      display: block;
-      padding: 10px 12px 12px;
-      color: #4e5963;
-      font-size: 13px;
-      font-weight: 750;
-    }
-
-    .turntable-video-row {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(170px, 1fr));
-      gap: 10px;
-      padding: 12px;
-      overflow-x: auto;
-    }
-
-    .turntable-video-item {
-      overflow: hidden;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      background: #f3f4f1;
-    }
-
-    .turntable-video-item video {
-      width: 100%;
-      height: auto;
-      aspect-ratio: 4 / 3;
-      object-fit: contain;
-      background: #f3f4f1;
-    }
-
-    .turntable-video-label {
-      display: block;
-      padding: 9px 10px 10px;
-      color: #4e5963;
-      font-size: 12px;
-      font-weight: 750;
-      text-align: center;
-    }
-
-    .paired-image-grid {
-      display: grid;
-      /* grid-template-columns: repeat(2, minmax(0, 1fr)); */
-      grid-template-columns: 2fr 2fr;
-      gap: 12px;
-      padding: 12px;
-    }
-
-    .paired-image-module {
-      overflow: hidden;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      background: #f3f4f1;
-    }
-
-    .paired-image-module img {
-      display: block;
-      width: 100%;
-      height: auto;
-      object-fit: contain;
-      background: #f3f4f1;
-    }
-
-    .paired-image-module figcaption {
-      padding: 10px 12px 12px;
-    }
-
-    .paired-image-module figcaption a {
-      color: var(--teal);
-      font-weight: 850;
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
-
-    .paired-image-fill {
-      flex: 1;
-      min-height: 0;
-      aspect-ratio: 16 / 9;
-      object-fit: cover;
-      object-position: center 66%;
-    }
-
-    .image-triplet {
-      display: grid;
-      grid-template-columns: 1fr;
-      padding: 0;
-    }
-
-    .image-triplet img {
-      width: 100%;
-      height: auto;
-      aspect-ratio: auto;
-      object-fit: contain;
-    }
-
-    .paired-image-card img {
-      cursor: zoom-in;
-    }
-
-    .image-lightbox {
-      position: fixed;
-      inset: 0;
-      z-index: 80;
-      display: none;
-      place-items: center;
-      padding: 32px;
-      background: rgba(10, 13, 16, 0.86);
-    }
-
-    .image-lightbox.open {
-      display: grid;
-    }
-
-    .image-lightbox img {
-      max-width: min(1200px, 96vw);
-      max-height: 88vh;
-      object-fit: contain;
-      background: #f3f4f1;
-      box-shadow: 0 22px 70px rgba(0, 0, 0, 0.42);
-    }
-
-    .image-lightbox button {
-      position: absolute;
-      top: 18px;
-      right: 20px;
-      width: 42px;
-      height: 42px;
-      border: 1px solid rgba(255, 255, 255, 0.45);
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.12);
-      color: #fff;
-      font-size: 26px;
-      line-height: 1;
-      cursor: pointer;
-    }
-
-    .gallery-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .source-list {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-
-    .source-list a {
-      display: block;
-      min-height: 88px;
-      padding: 16px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #fff;
-      color: #31404c;
-      font-size: 14px;
-      font-weight: 760;
-      overflow-wrap: anywhere;
-    }
-
-    .source-list a:hover,
-    .source-list a:focus-visible {
-      border-color: var(--teal);
-      color: var(--teal);
-      outline: none;
-    }
-
-    .footer {
-      padding: 28px 0;
-      background: #0d1013;
-      color: #b9c1bd;
-      font-size: 14px;
-    }
-
-    .footer .wrap {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-    }
-
-    @media (max-width: 1020px) {
-      .site-header {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 8px;
-      }
-
-      .nav {
-        justify-content: flex-start;
-      }
-
-      h1 {
-        font-size: 42px;
-      }
-
-      .section-head,
-      .two-col,
-      .reviewer-panel,
-      .setup-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .metric-grid,
-      .paper-grid,
-      .setup-facts,
-      .annotation-grid,
-      .mesh-grid,
-      .video-grid,
-      .gallery-grid,
-      .source-list {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .annotation-grid .media-card:first-child {
-        grid-column: span 1;
-      }
-
-      .pipeline {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .formula-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 660px) {
-      .site-header {
-        padding: 12px 18px;
-      }
-
-      .nav {
-        gap: 12px;
-        font-size: 13px;
-      }
-
-      .hero {
-        min-height: 460px;
-        height: 72vh;
-      }
-
-      .hero-content,
-      .wrap {
-        width: min(100% - 32px, 1160px);
-      }
-
-      .hero-content {
-        padding-bottom: 48px;
-      }
-
-      h1 {
-        font-size: 31px;
-      }
-
-      h2 {
-        font-size: 26px;
-      }
-
-      .hero-copy,
-      .lead {
-        font-size: 16px;
-      }
-
-      .section {
-        padding: 52px 0;
-      }
-
-      .metric-grid,
-      .paper-grid,
-      .setup-facts,
-      .annotation-grid,
-      .pipeline,
-      .mesh-grid,
-      .video-grid,
-      .paired-video-grid,
-      .paired-image-grid,
-      .gallery-grid,
-      .source-list {
-        grid-template-columns: 1fr;
-      }
-
-      .footer .wrap {
-        flex-direction: column;
-      }
-    }
-  </style>
+  <title>LDBody | ICLR 2027 Anonymous Submission</title>
+  <meta name="description" content="Anonymous ICLR 2027 project page for LDBody: Benchmarking Human Pose and Mesh Recovery with Residual Limb and Prostheses.">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#234e82">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
 </head>
 <body>
+  <a class="skip-link" href="#top">Skip to content</a>
   <header class="site-header">
-    <a class="brand" href="#top" aria-label="LD-Motion project home">
-      LD-Motion
-      <span>Calibrated RGB-Vicon motion benchmark</span>
-    </a>
-    <nav class="nav" aria-label="Page navigation">
-      <a href="#paper">Paper</a>
-      <a href="#dataset">Dataset</a>
-      <a href="#annotations">Annotations</a>
-      <a href="#mesh">Mesh</a>
-      <a href="#benchmarks">Benchmarks</a>
-      <a href="#reviewer-examples">Reviewer Examples</a>
-      <a href="#media">Media</a>
-    </nav>
+    <div class="wrap header-inner">
+      <a class="brand" href="#top" aria-label="LDBody home">LDBody<span>ICLR 2027 · Anonymous submission</span></a>
+      <nav class="nav" aria-label="Page navigation">
+        <a href="#paper">Paper</a>
+        <a href="#cohort-context">Cohort context</a>
+        <a href="#dataset">Dataset</a>
+        <a href="#motion-examples">Examples</a>
+        <a href="#annotations">Annotations</a>
+        <a href="#mesh">Mesh</a>
+        <a href="#benchmarks">Benchmarks</a>
+        <a href="#reviewer-examples">Review access</a>
+      </nav>
+    </div>
   </header>
 
   <main id="top">
     <section class="hero" aria-labelledby="hero-title">
-      <img src="assets/title1.jpg" alt="Vicon-constrained fitted mesh with camera positions and keypoint overlay">
-      <div class="hero-content">
-        <p class="eyebrow">NeurIPS E&amp;D 2026 dataset project</p>
-        <h1 id="hero-title">LD-Motion: A Calibrated Multi-View Human-Motion Dataset of Individuals with Limb Deficiency</h1>
-        <p class="hero-copy">
-          LD-Motion captures synchronized eight-view RGB video and Vicon motion capture for individuals with limb deficiency, supporting separated evaluation of 2D pose, multi-view 3D pose, residual-limb localization, prosthesis-supported landmarks, and human mesh recovery.
-        </p>
-        <div class="hero-actions">
-          <a class="button primary" href="#reviewer-examples">Reviewer Data Examples</a>
-          <a class="button secondary" href="#benchmarks">View Benchmarks</a>
+      <div class="wrap">
+        <p class="eyebrow">ICLR 2027 · Under review</p>
+        <h1 id="hero-title"><span class="project-name">LDBody:</span> Benchmarking Human Pose and Mesh Recovery with Residual Limb and Prostheses</h1>
+        <p class="authors">Anonymous authors · Paper under double-blind review</p>
+        <p class="hero-copy">Calibrated motion capture and diverse in-the-wild images for evaluating body joints, residual-limb endpoints, prosthesis-supported landmarks, and fitted human body surfaces.</p>
+        <div class="actions">
+          <a class="button primary" href="assets/LDBody_ICLR2027.pdf" target="_blank" rel="noopener noreferrer">Read the paper <span aria-hidden="true">↗</span></a>
+          <a class="button" href="#mesh-demos">Explore motion demos</a>
+          <a class="button" href="#reviewer-examples">Reviewer access</a>
         </div>
+        <figure class="overview">
+          <button class="zoom-button" type="button" aria-label="Enlarge: LDBody overview: calibrated eight-view RGB and Vicon motion capture, in-the-wild images, and benchmarks for 2D pose, 3D pose, and human mesh recovery"><img src="assets/title1.jpg" alt="LDBody overview: calibrated eight-view RGB and Vicon motion capture, in-the-wild images, and benchmarks for 2D pose, 3D pose, and human mesh recovery" width="3000" height="1648" fetchpriority="high"></button>
+          <figcaption><strong>LDBody at a glance.</strong> Shared landmark definitions connect calibrated motion recordings and in-the-wild images, with separate references for residual anatomy and prosthesis-supported function. <span class="figure-hint">Click to enlarge.</span></figcaption>
+        </figure>
       </div>
     </section>
 
-    <section class="section tint" aria-labelledby="stats-title">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <p class="kicker">Project summary</p>
-            <!-- <h2 id="stats-title">A visual-geometric benchmark beyond limb-complete assumptions</h2> -->
-          </div>
-          <!-- <p>
-            The page is reorganized around the paper draft and uses media selected from <code>/home/jessica/nips/ppt</code> and <code>/mnt/HDD-16TB-0/Jessica/LDMotion_Example</code>.
-          </p> -->
-        </div>
-        <div class="metric-grid">
-          <div class="metric teal">
-            <strong>1,111</strong>
-            <span>synchronized RGB videos across the current LD-Motion release</span>
-          </div>
-          <div class="metric blue">
-            <strong>982,042</strong>
-            <span>Vicon-derived 2D and 3D keypoints with residual limb end and prosthesis-aware keypoints </span>
-          </div>
-          <div class="metric amber">
-            <strong>8</strong>
-            <span>calibrated RGB views plus Vicon optical motion capture</span>
-          </div>
-          <div class="metric green">
-            <strong>8,866</strong>
-            <span>LDPose-Prosthesis images with added prosthesis keypoints</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="reviewer-examples" aria-labelledby="reviewer-examples-title">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <p class="kicker">For NeurIPS reviewers</p>
-            <h2 id="reviewer-examples-title">Reviewer data example package</h2>
-          </div>
-          <p>
-            This package is provided to make the released data structure and annotation layers directly inspectable during review.
-          </p>
-        </div>
-
-        <div class="reviewer-panel">
-          <div>
-            <p class="reviewer-greeting">Dear NeurIPS 2026 Reviewers,</p>
-            <p class="lead">
-              We provide a compact LD-Motion data example package for direct inspection. It includes synchronized raw RGB videos, frame-level annotation files, Vicon-derived 2D keypoints with skeleton-overlay video demonstrations, Vicon-derived 3D keypoint annotations, and Vicon-constrained mesh annotations exported as OBJ files, together with rendered image examples for quick visual checks.
-            </p>
-            <div class="reviewer-actions">
-              <a class="button primary download-button" href="https://drive.google.com/file/d/1bUdohASn1xDJOa_14ZihRycu3PcvRagv/view?usp=drive_link" target="_blank" rel="noopener">Download Reviewer Examples</a>
-              <span>ZIP package, 974 MB</span>
-            </div>
-          </div>
-
-          <div class="package-list" aria-label="Reviewer example package contents">
-            <div>
-              <strong>LD-Motion Raw videos</strong>
-              <span>Synchronized RGB camera videos for the AP001 02_Lunges example sequence.</span>
-            </div>
-            <div>
-              <strong>LD-Motion 2D annotations</strong>
-              <span>Per-frame keypoint annotations and OpenPose25 skeleton-overlay demo videos.</span>
-            </div>
-            <div>
-              <strong>LD-Motion 3D annotations</strong>
-              <span>Vicon-derived 3D keypoint references and residual/prosthesis-aware metadata.</span>
-            </div>
-            <div>
-              <strong>LD-Motion Mesh annotations</strong>
-              <span>Vicon-constrained fitted mesh references (a) Residual-limb case (b) prosthesis-worn case in OBJ format, plus rendered inspection images. </span>
-            </div>
-            <div>
-              <strong>LDPose-Prosthesis annotations</strong>
-              <span>Images with 2D annotations with added prosthesis keypointss </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- <section class="section" id="paper" aria-labelledby="paper-title">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <p class="kicker">Paper framing</p>
-            <h2 id="paper-title">What LD-Motion contributes</h2>
-          </div>
-          <p>
-            Current human pose and mesh benchmarks usually assume complete biological limbs. LD-Motion targets the missing calibrated setting: real multi-view motion of individuals with residual limbs and worn prostheses.
-          </p>
-        </div>
-        <div class="paper-grid">
-          <article class="paper-card">
-            <h3>Calibrated multi-view RGB-Vicon capture</h3>
-            <p>Eight synchronized RGB cameras and Vicon motion capture provide geometry-aware 2D/3D supervision rather than image-only annotations.</p>
-          </article>
-          <article class="paper-card">
-            <h3>Residual and prosthesis-aware labels</h3>
-            <p>The dataset preserves residual-limb endpoint labels and adds prosthesis-supported standard-layout keypoints when they are visible and functionally relevant.</p>
-          </article>
-          <article class="paper-card">
-            <h3>Vicon-constrained fitted mesh references</h3>
-            <p>HSMR or ResiHMR initializations are transformed into Vicon space, selected by joint alignment error, and refined with Vicon-derived constraints.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section dark" id="dataset" aria-labelledby="dataset-title">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <p class="kicker">Capture setup</p>
-            <h2 id="dataset-title">Indoor motion capture with synchronized visual and geometric references</h2>
-          </div>
-          <p class="muted">
-            The setup is designed as a calibrated computer-vision benchmark, not as a population-representative or clinical gait study.
-          </p>
-        </div>
-
-        <div class="setup-grid">
-          <figure class="media-card tall">
-            <img src="assets/ldmotion/vicon_setup.jpg" alt="Vicon marker and camera setup example">
-            <figcaption>Vicon setup illustration selected from the project presentation assets.</figcaption>
-          </figure>
-          <div class="setup-facts">
-            <div class="fact">
-              <strong>RGB cameras</strong>
-              <span>8 synchronized RGB cameras, 2048 x 1080 resolution, 50 fps.</span>
-            </div>
-            <div class="fact">
-              <strong>Vicon capture</strong>
-              <span>Vicon optical marker trajectories recorded at 100 Hz.</span>
-            </div>
-            <div class="fact">
-              <strong>Marker protocol</strong>
-              <span>Full-body Plug-in Gait marker set plus four additional residual-limb markers.</span>
-            </div>
-            <div class="fact">
-              <strong>Motion protocol</strong>
-              <span>Approximately 27 expert-informed motion and coordination tests per participant.</span>
-            </div>
-            <div class="fact">
-              <strong>Cohort scope</strong>
-              <span>5 adult male participants with lower-limb terminal deficiency in the current release.</span>
-            </div>
-            <div class="fact">
-              <strong>Release boundary</strong>
-              <span>Restricted raw videos, Vicon data, and fitted meshes; annotations and metadata released where consent permits.</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section> -->
-
-    <!-- <section class="section" id="annotations" aria-labelledby="annotations-title">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <p class="kicker">Annotation layers</p>
-            <h2 id="annotations-title">Vicon-derived 3D keypoints and calibrated multi-view 2D projections</h2>
-          </div>
-          <p>
-            LD-Motion exports OpenPose-style 25-body-keypoint annotations and COCO-style 17-keypoint annotations, each augmented with the same 8 residual-limb keypoints defined by LDPose. The conversion keeps Vicon side semantics; no left-right flipping is applied.
-          </p>
-        </div>
-
-        <div class="annotation-grid">
-          <figure class="media-card wide">
-            <img src="assets/ldmotion/ap001_lunges_openpose25_labels.jpg" alt="OpenPose25 keypoint names on an AP001 lunges camera frame">
-            <figcaption>OpenPose25 keypoints and labels projected from Vicon-derived 3D references into a calibrated RGB camera view.</figcaption>
-          </figure>
-          <figure class="media-card">
-            <img src="assets/ldmotion/ap002_squat_3d_keypoints.jpg" alt="3D OpenPose25 keypoints in Vicon world coordinates">
-            <figcaption>OpenPose25 3D skeleton, residual endpoint, and camera locations in the Vicon world coordinate system.</figcaption>
-          </figure>
-          <figure class="media-card wide">
-            <img src="assets/ldmotion/ap002_squat_openpose25_overlay.jpg" alt="OpenPose25 2D overlay on AP002 squat frame">
-            <figcaption>2D projection quality check on AP002 squat, showing synchronized RGB frame to Vicon frame alignment.</figcaption>
-          </figure>
-          <figure class="media-card wide">
-            <img src="assets/ldmotion/prosthesis_mask_example.png" alt="Prosthesis-related mask and overlay example">
-            <figcaption>Prosthesis-related visual evidence used to inspect prosthesis-supported annotation behavior.</figcaption>
-          </figure>
-          <figure class="media-card">
-            <img src="assets/ldmotion/ldpose_prosthesis_skeleton.jpg" alt="LDPose-Prosthesis skeleton annotation example">
-            <figcaption>LDPose-Prosthesis example with residual-limb and prosthesis-aware keypoint visualization.</figcaption>
-          </figure>
-        </div>
-
-        <div class="pipeline" aria-label="Annotation and mesh processing pipeline">
-          <article class="step">
-            <span class="step-number">1</span>
-            <h3>Vicon markers</h3>
-            <p>Plug-in Gait joint centers and residual-limb markers provide the 3D source points in Vicon millimeters.</p>
-          </article>
-          <article class="step">
-            <span class="step-number">2</span>
-            <h3>Keypoint conversion</h3>
-            <p>OpenPose25 and COCO-style layouts are built from direct markers, joint centers, or marker averages.</p>
-          </article>
-          <article class="step">
-            <span class="step-number">3</span>
-            <h3>2D projection</h3>
-            <p>Vicon 3D points are transformed into RGB/Theia coordinates and projected into each calibrated camera.</p>
-          </article>
-          <article class="step">
-            <span class="step-number">4</span>
-            <h3>Residual endpoints</h3>
-            <p>Residual-limb endpoints are retained as a separate evaluation layer instead of being folded into a standard skeleton score.</p>
-          </article>
-          <article class="step">
-            <span class="step-number">5</span>
-            <h3>Prosthesis landmarks</h3>
-            <p>Visible prosthesis-supported standard-layout keypoints are treated as functional motion landmarks, not anatomical joints.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section tint" id="mesh" aria-labelledby="mesh-title">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <p class="kicker">Fitted mesh references</p>
-            <h2 id="mesh-title">Anatomical and kinematic mesh references in Vicon space</h2>
-          </div>
-          <p>
-            The paper explicitly treats fitted meshes as benchmark references generated through model initialization and Vicon-constrained fitting, not as clinical surface scans or raw anatomical ground truth.
-          </p>
-        </div>
-
-        <div class="mesh-grid">
-          <figure class="media-card">
-            <img src="assets/ldmotion/ap002_squat_mesh_oblique.jpg" alt="AP002 squat Vicon-constrained mesh reference">
-            <figcaption>Weighted fitted mesh reference aligned to Vicon-derived OpenPose25 keypoints.</figcaption>
-          </figure>
-          <figure class="media-card">
-            <img src="assets/ldmotion/ap001_lunges_kinematic_mesh.jpg" alt="AP001 lunges kinematic mesh reference">
-            <figcaption>Kinematic fitted mesh reference preserving standard full-body layout for prosthesis-supported motion.</figcaption>
-          </figure>
-          <figure class="media-card">
-            <img src="assets/ldmotion/ap001_lunges_anatomical_mesh.jpg" alt="AP001 lunges anatomical mesh reference">
-            <figcaption>Anatomical fitted mesh reference focused on post-deficiency body structure.</figcaption>
-          </figure>
-        </div>
-
-        <div class="formula-grid">
-          <article class="formula">
-            <h3>Anatomical reference</h3>
-            <code>L_anat = L_joint + lambda_res L_res + lambda_theta L_theta + lambda_beta L_beta + lambda_t L_t</code>
-            <p>Uses Vicon-derived 3D body keypoints and residual-limb endpoint constraints when valid residual markers are available.</p>
-          </article>
-          <article class="formula">
-            <h3>Kinematic reference</h3>
-            <code>L_kin = L_joint + lambda_theta L_theta + lambda_beta L_beta + lambda_t L_t</code>
-            <p>Uses Vicon-derived functional keypoints, including prosthesis-supported standard-layout keypoints when available.</p>
-          </article>
-        </div>
-      </div>
-    </section> -->
-
-    <section class="section" id="lunges-video-examples" aria-labelledby="lunges-video-examples-title">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <p class="kicker">LD-Motion examples</p>
-            <h2 id="lunges-video-examples-title">Demostration of LD-Motion</h2>
-          </div>
-          <!-- <p>
-            AP001 / 02_Lunges examples for demostration of LD-Motion.
-          </p> -->
-        </div>
-
-        <div class="video-stack">
-
-          <figure class="media-card paired-image-card">
-            <div class="paired-image-grid">
-              <div class="paired-image-module">
-                <img class="paired-image-fill" src="assets/ldmotion/hero_mesh_vicon_v1.jpg" alt="Vicon-aligned mesh example">
-                <figcaption>Recording setup</figcaption>
-              </div>
-              <div class="paired-image-module image-triplet">
-                <img src="assets/AP001.png" alt="AP001 segmentation with prosthesis">
-                <figcaption>Individuals with limb deficiency (participant with prosthesis | participant with residual limb | prosthesis) </figcaption>
-              </div>
-            </div>
-          </figure>
-
-          <figure class="media-card wide">
-            <video controls muted playsinline preload="metadata">
-              <source src="assets/ldmotion/02_Lunges_55788786-60416142.face_mosaic.rot180_grid4x2.web.mp4" type="video/mp4">
-            </video>
-            <figcaption>8 RGB cameras videos example</figcaption>
-          </figure>
-
-
-
-          <figure class="media-card paired-video-card">
-            <div class="paired-video-grid">
-              <div class="paired-video-module">
-                <video controls muted playsinline preload="metadata">
-                  <source src="assets/ldmotion/02_Lunges.vicon_markers_openpose25_3d.h264.mp4" type="video/mp4">
-                </video>
-                <span class="paired-video-label">Vicon-derived 3D OpenPose25-style body keypoints (orange) with residual limb (pink) annotation and Vicon markers (grey)</span>
-              </div>
-              <div class="paired-video-module">
-                <video controls muted playsinline preload="metadata">
-                  <source src="assets/ldmotion/02_Lunges.camera_wide.vicon_markers_openpose25_3d.h264.mp4" type="video/mp4">
-                </video>
-                <span class="paired-video-label">Camera-wide demonstration including all Vicon (v-cams) and RGB cameras (t-cams) in relative positions</span>
-              </div>
-            </div>
-          </figure>
-
-
-          <figure class="media-card wide">
-            <a class="youtube-link" href="https://youtu.be/7504Ta2tkAE" target="_blank" rel="noopener" aria-label="Watch Vicon-derived keypoints and prosthesis-aware 2d annotation on YouTube">
-              <img src="https://img.youtube.com/vi/7504Ta2tkAE/hqdefault.jpg" alt="Vicon-derived keypoints and prosthesis-aware 2d annotation YouTube preview">
-              <span class="youtube-play" aria-hidden="true">▶</span>
-            </a>
-            <figcaption>Vicon-derived keypoints and prosthesis-aware 2d annotation</figcaption>
-          </figure>
-
-                    <figure class="media-card turntable-video-card">
-            <div class="turntable-video-row">
-              <div class="turntable-video-item">
-                <video controls muted playsinline preload="metadata">
-                  <source src="assets/best_refined_weighted_360_videos/AP001_02_Lunges_best_refined_weighted_f000050_360.h264.mp4" type="video/mp4">
-                </video>
-                <span class="turntable-video-label">Frame 50</span>
-              </div>
-              <div class="turntable-video-item">
-                <video controls muted playsinline preload="metadata">
-                  <source src="assets/best_refined_weighted_360_videos/AP001_02_Lunges_best_refined_weighted_f000250_360.h264.mp4" type="video/mp4">
-                </video>
-                <span class="turntable-video-label">Frame 250</span>
-              </div>
-              <div class="turntable-video-item">
-                <video controls muted playsinline preload="metadata">
-                  <source src="assets/best_refined_weighted_360_videos/AP001_02_Lunges_best_refined_weighted_f000700_360.h264.mp4" type="video/mp4">
-                </video>
-                <span class="turntable-video-label">Frame 700</span>
-              </div>
-              <div class="turntable-video-item">
-                <video controls muted playsinline preload="metadata">
-                  <source src="assets/best_refined_weighted_360_videos/AP001_02_Lunges_best_refined_weighted_f001200_360.h264.mp4" type="video/mp4">
-                </video>
-                <span class="turntable-video-label">Frame 1200</span>
-              </div>
-              <div class="turntable-video-item">
-                <video controls muted playsinline preload="metadata">
-                  <source src="assets/best_refined_weighted_360_videos/AP001_02_Lunges_best_refined_weighted_f001350_360.h264.mp4" type="video/mp4">
-                </video>
-                <span class="turntable-video-label">Frame 1350</span>
-              </div>
-            </div>
-            <figcaption>Vicon-constrained mesh fitting - residual-limb case.</figcaption>
-          </figure>
-
-          <figure class="media-card turntable-video-card">
-            <div class="turntable-video-row">
-              <div class="turntable-video-item">
-                <video controls muted playsinline preload="metadata">
-                  <source src="assets/pre_amputation_best_refined_weighted_360_videos/AP001_02_Lunges_pre_amputation_best_refined_weighted_f000050_360.h264.mp4" type="video/mp4">
-                </video>
-                <span class="turntable-video-label">Frame 50</span>
-              </div>
-              <div class="turntable-video-item">
-                <video controls muted playsinline preload="metadata">
-                  <source src="assets/pre_amputation_best_refined_weighted_360_videos/AP001_02_Lunges_pre_amputation_best_refined_weighted_f000250_360.h264.mp4" type="video/mp4">
-                </video>
-                <span class="turntable-video-label">Frame 250</span>
-              </div>
-              <div class="turntable-video-item">
-                <video controls muted playsinline preload="metadata">
-                  <source src="assets/pre_amputation_best_refined_weighted_360_videos/AP001_02_Lunges_pre_amputation_best_refined_weighted_f000700_360.h264.mp4" type="video/mp4">
-                </video>
-                <span class="turntable-video-label">Frame 700</span>
-              </div>
-              <div class="turntable-video-item">
-                <video controls muted playsinline preload="metadata">
-                  <source src="assets/pre_amputation_best_refined_weighted_360_videos/AP001_02_Lunges_pre_amputation_best_refined_weighted_f001200_360.h264.mp4" type="video/mp4">
-                </video>
-                <span class="turntable-video-label">Frame 1200</span>
-              </div>
-              <div class="turntable-video-item">
-                <video controls muted playsinline preload="metadata">
-                  <source src="assets/pre_amputation_best_refined_weighted_360_videos/AP001_02_Lunges_pre_amputation_best_refined_weighted_f001350_360.h264.mp4" type="video/mp4">
-                </video>
-                <span class="turntable-video-label">Frame 1350</span>
-              </div>
-            </div>
-            <figcaption>Vicon-constrained mesh fitting - prosthesis-worn case.</figcaption>
-          </figure>
-
-
-
-
-        </div>
-      </div>
-    </section>
-
-    <section class="section tint" id="ldpose-prosthesis" aria-labelledby="ldpose-prosthesis-title">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <p class="kicker">LDPose-Prosthesis Dataset</p>
-            <h2 id="ldpose-prosthesis-title">LDPose-Prosthesis Dataset</h2>
-          </div>
-        </div>
-        <p class="section-copy">
-          We follow LDPose for non-worn cases by annotating the residual-limb endpoint and leaving unavailable distal keypoints unlabeled. For prosthesis-worn cases, we keep the residual endpoint and add visible, functionally relevant standard-layout keypoints on the prosthetic component.
-        </p>
-
-        <div class="paired-image-grid">
-          <figure class="paired-image-module">
-            <img src="assets/annotation.jpg" alt="LDPose keypoints annotation">
-            <figcaption>LDpose keypoints annotation, for more details, please refer to <a href="https://akitaraphael.github.io/ldpose/" target="_blank" rel="noopener">LDPose</a>.</figcaption>
-          </figure>
-          <figure class="paired-image-module">
-            <img src="assets/ldmotion/ldpose_prosthesis_skeleton.jpg" alt="LDPose-Prosthesis skeleton dataset demonstration">
-            <figcaption>LDPose-Prosthesis Dataset Demostration</figcaption>
-          </figure>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="benchmarks" aria-labelledby="benchmarks-title">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <p class="kicker">Benchmark tasks</p>
-            <h2 id="benchmarks-title">Benchmark for 2D pose, 3D pose, and mesh recovery</h2>
-          </div>
-          <!-- <p>
-            The paper avoids a single aggregate score because standard pose, residual endpoints, prosthesis-supported keypoints, and fitted mesh consistency fail in different ways.
-          </p> -->
-        </div>
-
-        <div class="benchmark-grid">
-          <div>
-            <div class="table-scroll">
-              <table class="benchmark-table" aria-label="2D pose benchmark summary">
-                <thead>
-                  <tr>
-                    <th rowspan="2">Method</th>
-                    <th rowspan="2">Fine-<br>tuning</th>
-                    <th colspan="6">LDPose-Prosthesis</th>
-                    <th colspan="6">LD-Motion</th>
-                  </tr>
-                  <tr>
-                    <th>AP</th>
-                    <th>AP<sup>50</sup></th>
-                    <th>AP<sup>75</sup></th>
-                    <th>AR</th>
-                    <th>AR<sup>50</sup></th>
-                    <th>AR<sup>75</sup></th>
-                    <th>AP</th>
-                    <th>AP<sup>50</sup></th>
-                    <th>AP<sup>75</sup></th>
-                    <th>AR</th>
-                    <th>AR<sup>50</sup></th>
-                    <th>AR<sup>75</sup></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="group-start">
-                    <td>YOLOPose-l</td>
-                    <td></td>
-                    <td>58.4</td>
-                    <td>84.4</td>
-                    <td>67.7</td>
-                    <td>64.2</td>
-                    <td>87.9</td>
-                    <td>72.5</td>
-                    <td>45.7</td>
-                    <td>73.5</td>
-                    <td>50.8</td>
-                    <td>51.8</td>
-                    <td>82.9</td>
-                    <td>56.8</td>
-                  </tr>
-                  <tr>
-                    <td><span class="method-citation">Maji et al. 2022</span></td>
-                    <td class="checkmark">&#10003;</td>
-                    <td>62.8</td>
-                    <td>82.3</td>
-                    <td>68.6</td>
-                    <td>65.8</td>
-                    <td>84.8</td>
-                    <td>71.2</td>
-                    <td>32.7</td>
-                    <td>46.2</td>
-                    <td>35.6</td>
-                    <td>35.4</td>
-                    <td>49.2</td>
-                    <td>38.0</td>
-                  </tr>
-                  <tr class="group-start">
-                    <td>RTMPose-l</td>
-                    <td></td>
-                    <td>63.3</td>
-                    <td>87.9</td>
-                    <td>74.1</td>
-                    <td>67.3</td>
-                    <td>88.3</td>
-                    <td>76.4</td>
-                    <td>69.1</td>
-                    <td>97.8</td>
-                    <td>82.6</td>
-                    <td>72.8</td>
-                    <td>98.6</td>
-                    <td>86.2</td>
-                  </tr>
-                  <tr>
-                    <td><span class="method-citation">Jiang et al. 2023</span></td>
-                    <td class="checkmark">&#10003;</td>
-                    <td>77.4</td>
-                    <td>89.9</td>
-                    <td>84.4</td>
-                    <td>79.7</td>
-                    <td>90.3</td>
-                    <td>85.0</td>
-                    <td>72.6</td>
-                    <td>96.9</td>
-                    <td>81.3</td>
-                    <td>77.6</td>
-                    <td>97.6</td>
-                    <td>84.2</td>
-                  </tr>
-                  <tr class="group-start">
-                    <td>ViTPose-l</td>
-                    <td></td>
-                    <td>65.0</td>
-                    <td>88.9</td>
-                    <td>76.0</td>
-                    <td>69.2</td>
-                    <td>89.0</td>
-                    <td>78.7</td>
-                    <td>71.8</td>
-                    <td>98.8</td>
-                    <td>87.1</td>
-                    <td>75.5</td>
-                    <td>99.0</td>
-                    <td>90.2</td>
-                  </tr>
-                  <tr>
-                    <td><span class="method-citation">Xu et al. 2022</span></td>
-                    <td class="checkmark">&#10003;</td>
-                    <td><strong>80.5</strong></td>
-                    <td><strong>90.8</strong></td>
-                    <td><strong>86.4</strong></td>
-                    <td><strong>82.9</strong></td>
-                    <td><strong>91.0</strong></td>
-                    <td><strong>88.0</strong></td>
-                    <td><strong>81.9</strong></td>
-                    <td><strong>99.0</strong></td>
-                    <td><strong>91.4</strong></td>
-                    <td><strong>85.9</strong></td>
-                    <td><strong>99.4</strong></td>
-                    <td><strong>93.4</strong></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <p class="table-note">2D keypoint estimation on LDPose-Prosthesis and LD-Motion. COCO-style AP/AR is reported over the LDPose 25-keypoint schema; methods marked with &#10003; are fine-tuned on LDPose-Prosthesis.</p>
-          </div>
-
-          <div>
-            <table class="benchmark-table" aria-label="3D pose benchmark summary">
-              <thead>
-                <tr>
-                  <th>Method</th>
-                  <th>Fine-tuning</th>
-                  <th>MPJPE ↓</th>
-                  <th>PA-MPJPE ↓</th>
-                  <th>MPJPE-ResidualEnd ↓</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="group-start">
-                  <td>YOLOPose-l</td>
-                  <td></td>
-                  <td>209.28</td>
-                  <td>96.96</td>
-                  <td>-</td>
-                </tr>
-                <tr>
-                  <td><span class="method-citation">Maji et al. 2022</span></td>
-                  <td class="checkmark">&#10003;</td>
-                  <td>594.64</td>
-                  <td>130.72</td>
-                  <td>375.94</td>
-                </tr>
-                <tr class="group-start">
-                  <td>RTMPose-l</td>
-                  <td></td>
-                  <td>47.89</td>
-                  <td>45.10</td>
-                  <td>-</td>
-                </tr>
-                <tr>
-                  <td><span class="method-citation">Jiang et al. 2023</span></td>
-                  <td class="checkmark">&#10003;</td>
-                  <td>58.83</td>
-                  <td>53.35</td>
-                  <td>110.0</td>
-                </tr>
-                <tr class="group-start">
-                  <td>ViTPose-l</td>
-                  <td></td>
-                  <td><strong>46.07</strong></td>
-                  <td><strong>43.56</strong></td>
-                  <td>-</td>
-                </tr>
-                <tr>
-                  <td><span class="method-citation">Xu et al. 2022</span></td>
-                  <td class="checkmark">&#10003;</td>
-                  <td>50.25</td>
-                  <td>47.61</td>
-                  <td><strong>90.12</strong></td>
-                </tr>
-              </tbody>
-            </table>
-            <p class="table-note">Multi-view 3D keypoint estimation on LD-Motion. Models without fine-tuning do not predict residual-limb endpoints and are therefore not evaluated on MPJPE-ResidualEnd.</p>
-          </div>
-
-          <div>
-            <table class="benchmark-table" aria-label="Mesh recovery benchmark summary">
-              <thead>
-                <tr>
-                  <th>Method</th>
-                  <th>MPJPE ↓</th>
-                  <th>PA-MPJPE ↓</th>
-                  <th>MPJPE-ResidualEnd ↓</th>
-                  <th>MVE ↓</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>TokenHMR [CVPR24] <span class="method-citation">Dwivedi et al. 2024</span></td>
-                  <td>148.81</td>
-                  <td>87.30</td>
-                  <td>-</td>
-                  <td>177.81</td>
-                </tr>
-                <tr>
-                  <td>CameraHMR [3DV25] <span class="method-citation">Patel and Black 2025</span></td>
-                  <td>229.97</td>
-                  <td>120.71</td>
-                  <td>-</td>
-                  <td>198.53</td>
-                </tr>
-                <tr>
-                  <td>PromptHMR [CVPR25] <span class="method-citation">Wang et al. 2025</span></td>
-                  <td>148.09</td>
-                  <td>87.25</td>
-                  <td>-</td>
-                  <td>107.44</td>
-                </tr>
-                <tr>
-                  <td>ResiHMR <span class="method-citation">Ying et al. 2026</span></td>
-                  <td><strong>135.32<sup>†</sup></strong></td>
-                  <td><strong>76.14<sup>†</sup></strong></td>
-                  <td><strong>154.22</strong></td>
-                  <td><strong>101.47<sup>†</sup></strong></td>
-                </tr>
-              </tbody>
-            </table>
-            <p class="table-note">3D human mesh recovery on LD-Motion. <sup>†</sup> indicates that ResiHMR is evaluated over anatomically present joints and post-amputation vertices. Fitted mesh references are used for benchmark diagnostics, not clinical surface-ground-truth evaluation.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- <section class="section dark" id="media" aria-labelledby="media-title">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <p class="kicker">Video examples</p>
-            <h2 id="media-title">Synchronized RGB and OpenPose25 overlay demos</h2>
-          </div>
-          <p class="muted">
-            Both videos are AP001 / 02_Lunges / camera 55788788 examples from <code>LDMotion_Example</code>, 2048 x 1080 at 50 fps for 34.88 seconds.
-          </p>
-        </div>
-        <div class="video-grid">
-          <figure class="media-card wide">
-            <video controls muted playsinline preload="metadata" poster="assets/ldmotion/ap001_lunges_openpose25_labels.jpg">
-              <source src="assets/ldmotion/ap001_lunges_face_mosaic.mp4" type="video/mp4">
-            </video>
-            <figcaption>Face-mosaic RGB video example for privacy-aware motion visualization.</figcaption>
-          </figure>
-          <figure class="media-card wide">
-            <video controls muted playsinline preload="metadata" poster="assets/ldmotion/ap001_lunges_openpose25_labels.jpg">
-              <source src="assets/ldmotion/ap001_lunges_openpose25_overlay.mp4" type="video/mp4">
-            </video>
-            <figcaption>OpenPose25 overlay video generated from Vicon-derived 3D keypoints and calibrated 2D projection.</figcaption>
-          </figure>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="gallery-title">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <p class="kicker">Image gallery</p>
-            <h2 id="gallery-title">Representative frames from the selected media folders</h2>
-          </div>
-          <p>
-            These examples show the main paper artifacts: multi-view projected 2D labels, 3D Vicon-space keypoints, residual/prosthesis-aware annotations, and fitted mesh references.
-          </p>
-        </div>
-        <div class="gallery-grid">
-          <figure class="media-card wide">
-            <img src="assets/ldmotion/ap001_lunges_openpose25_labels.jpg" alt="OpenPose25 labels on AP001 lunges frame">
-            <figcaption>OpenPose25 keypoint names on AP001 lunges.</figcaption>
-          </figure>
-          <figure class="media-card wide">
-            <img src="assets/ldmotion/ap002_squat_openpose25_overlay.jpg" alt="OpenPose25 overlay on AP002 squat">
-            <figcaption>Projected 2D OpenPose25 overlay on AP002 squat.</figcaption>
-          </figure>
-          <figure class="media-card">
-            <img src="assets/ldmotion/ap002_squat_3d_keypoints.jpg" alt="OpenPose25 3D keypoint camera-wide render">
-            <figcaption>Vicon-world 3D keypoint and camera layout check.</figcaption>
-          </figure>
-          <figure class="media-card">
-            <img src="assets/ldmotion/ap002_squat_mesh_oblique.jpg" alt="AP002 oblique mesh reference">
-            <figcaption>Fitted mesh reference with skeleton and residual endpoint overlay.</figcaption>
-          </figure>
-          <figure class="media-card wide">
-            <img src="assets/ldmotion/prosthesis_mask_example.png" alt="Prosthesis mask example">
-            <figcaption>Prosthesis-related visual example for annotation inspection.</figcaption>
-          </figure>
-          <figure class="media-card">
-            <img src="assets/ldmotion/ldpose_prosthesis_skeleton.jpg" alt="LDPose-Prosthesis skeleton example">
-            <figcaption>LDPose-Prosthesis skeleton visualization.</figcaption>
-          </figure>
-        </div>
-      </div>
-    </section>
-
-    <section class="section tint" aria-labelledby="sources-title">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <p class="kicker">Sources</p>
-            <h2 id="sources-title">Local paper and media sources used for this page</h2>
-          </div>
-          <p>
-            The webpage copy is based on the attached 31-page paper draft, and the displayed media is selected only from the two folders requested.
-          </p>
-        </div>
-        <ul class="source-list">
-          <li><a href="../ppt">/home/jessica/nips/ppt</a></li>
-          <li><a href="/mnt/HDD-16TB-0/Jessica/LDMotion_Example">/mnt/HDD-16TB-0/Jessica/LDMotion_Example</a></li>
-          <li><a href="/home/jessica/Downloads/_NeurIPS_E_D_2026__LD_Motion__A_Calibrated_Multi_View_Human_Motion_Dataset_of_Individuals_with_Limb_Deficiency.pdf">Attached paper draft PDF</a></li>
-          <li><a href="../scripts/hmr/vicon_markers_to_openpose25_keypoints_notes.md">Vicon marker to keypoint notes</a></li>
-          <li><a href="../scripts/hmr/hsmr_mesh_vicon_3d_pipeline_notes.md">HSMR mesh pipeline notes</a></li>
-          <li><a href="../scripts/hmr/testing_protocol_notes.md">Testing protocol notes</a></li>
-        </ul>
-      </div>
-    </section>
-  </main> -->
-
-  <footer class="footer">
     <div class="wrap">
-      <span>LD-Motion project showcase</span>
-      <span>Static local page built from the paper draft and selected project media</span>
+      <dl class="metrics" aria-label="Dataset statistics from the submitted paper">
+        <div class="metric"><dt>1,088</dt><dd>view-specific videos<br>136 synchronized tests × 8 views</dd></div>
+        <div class="metric"><dt>963,104</dt><dd>RGB frames<br>counted across all camera views</dd></div>
+        <div class="metric"><dt>8,866</dt><dd>in-the-wild images<br>with added prosthesis landmarks</dd></div>
+        <div class="metric"><dt>8 + Vicon</dt><dd>synchronized RGB cameras<br>and optical motion capture</dd></div>
+      </dl>
     </div>
-  </footer>
-  <script>
-    (() => {
-      const lightbox = document.createElement("div");
-      lightbox.className = "image-lightbox";
-      lightbox.setAttribute("role", "dialog");
-      lightbox.setAttribute("aria-modal", "true");
-      lightbox.setAttribute("aria-label", "Expanded image preview");
 
-      const closeButton = document.createElement("button");
-      closeButton.type = "button";
-      closeButton.setAttribute("aria-label", "Close expanded image");
-      closeButton.textContent = "x";
+    <section class="section cohort-highlight" id="cohort-context" aria-labelledby="cohort-title">
+      <div class="wrap">
+        <div class="section-head">
+          <div><p class="kicker">Cohort scale in context</p><h2 id="cohort-title">Focused cohorts.<br>Distinct measurement goals.</h2></div>
+          <p>Our five-participant geometric evaluation cohort is comparable in size to selected, closely related prosthesis-user vision resources.</p>
+        </div>
 
-      const preview = document.createElement("img");
-      preview.alt = "";
+        <svg class="cohort-symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <defs><symbol id="cohort-person" viewBox="0 0 24 28"><circle cx="12" cy="6" r="4"/><path d="M3 25v-5a9 9 0 0 1 18 0v5Z"/></symbol></defs>
+        </svg>
+        <div class="cohort-comparison" aria-label="Participant counts in selected related vision resources">
+          <article class="cohort-card">
+            <div class="cohort-card-heading"><h3>ProGait</h3><a class="cohort-venue" href="https://arxiv.org/abs/2507.10223" target="_blank" rel="noopener noreferrer">ICCV 2025</a></div>
+            <div class="cohort-count"><strong>4</strong><span>participants</span></div>
+            <div class="cohort-people" aria-hidden="true">
+              <svg><use href="#cohort-person"/></svg><svg><use href="#cohort-person"/></svg><svg><use href="#cohort-person"/></svg><svg><use href="#cohort-person"/></svg>
+            </div>
+            <p class="cohort-population">Transfemoral prosthesis users</p>
+            <p class="cohort-purpose">Walking with varied prosthesis configurations; segmentation, 2D pose, and gait analysis.</p>
+            <a class="cohort-source" href="https://arxiv.org/html/2507.10223v1#S3.SS1" target="_blank" rel="noopener noreferrer">Source: ProGait, §3.1 <span aria-hidden="true">↗</span></a>
+          </article>
 
-      lightbox.append(closeButton, preview);
-      document.body.appendChild(lightbox);
+          <article class="cohort-card cohort-ours">
+            <div class="cohort-card-heading"><h3>LDBody Motion</h3><span>This work</span></div>
+            <div class="cohort-count"><strong>5</strong><span>participants</span></div>
+            <div class="cohort-people" aria-hidden="true">
+              <svg><use href="#cohort-person"/></svg><svg><use href="#cohort-person"/></svg><svg><use href="#cohort-person"/></svg><svg><use href="#cohort-person"/></svg><svg><use href="#cohort-person"/></svg>
+            </div>
+            <p class="cohort-population">Current geometric evaluation cohort</p>
+            <p class="cohort-purpose">Eight-view RGB + Vicon, residual endpoints, prosthesis-supported landmarks, and fitted human-body references.</p>
+            <a class="cohort-source" href="assets/LDBody_ICLR2027.pdf#page=6" target="_blank" rel="noopener noreferrer">Source: submitted paper, §3.4 <span aria-hidden="true">↗</span></a>
+          </article>
 
-      const closeLightbox = () => {
-        lightbox.classList.remove("open");
-        preview.removeAttribute("src");
-        preview.alt = "";
-      };
+          <article class="cohort-card">
+            <div class="cohort-card-heading"><h3>RSP3D</h3><a class="cohort-venue" href="https://arxiv.org/abs/2609.18406" target="_blank" rel="noopener noreferrer">ECCV 2026</a></div>
+            <div class="cohort-count"><strong>6</strong><span>participants</span></div>
+            <div class="cohort-people" aria-hidden="true">
+              <svg><use href="#cohort-person"/></svg><svg><use href="#cohort-person"/></svg><svg><use href="#cohort-person"/></svg><svg><use href="#cohort-person"/></svg><svg><use href="#cohort-person"/></svg><svg><use href="#cohort-person"/></svg>
+            </div>
+            <p class="cohort-population">Running-specific prosthesis users</p>
+            <p class="cohort-purpose">Multi-view motion capture for evaluating natural body joints and prosthesis surface geometry.</p>
+            <a class="cohort-source" href="https://arxiv.org/html/2609.18406v1#S3.SS4" target="_blank" rel="noopener noreferrer">Source: RSP3D, §3.4 / Table 2 <span aria-hidden="true">↗</span></a>
+          </article>
+        </div>
+        <p class="cohort-scope">Selected vision resources with different populations and protocols. Larger biomechanics cohorts also exist, including <a href="https://www.nature.com/articles/s41597-024-03677-3" target="_blank" rel="noopener noreferrer">30 transtibial prosthesis users studied with optical motion capture and IMUs</a>.</p>
 
-      document.querySelectorAll(".paired-image-card img").forEach((image) => {
-        image.tabIndex = 0;
-        image.setAttribute("role", "button");
-        image.setAttribute("aria-label", `Expand image: ${image.alt}`);
+        <div class="measurement-panel" aria-labelledby="measurement-title">
+          <div class="measurement-heading"><div><p class="kicker">The LDBody contribution</p><h3 id="measurement-title">Calibrated capture. Four explicit evaluation targets.</h3></div><span class="measurement-badge">8-view RGB + Vicon</span></div>
+          <div class="measurement-targets">
+            <div class="measurement-target">
+              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="24" cy="8" r="4"/><path d="M24 12v16m-13-7 13-5 13 5M24 28l-9 13m9-13 9 13"/><circle cx="24" cy="17" r="2.5" fill="currentColor"/><circle cx="24" cy="28" r="2.5" fill="currentColor"/><circle cx="11" cy="21" r="2.5" fill="currentColor"/><circle cx="37" cy="21" r="2.5" fill="currentColor"/></svg>
+              <strong>Body pose</strong><span>2D &amp; multi-view 3D</span>
+            </div>
+            <div class="measurement-target">
+              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M17 5v17a7 7 0 0 0 14 0V5"/><circle cx="24" cy="26" r="10" stroke-dasharray="3 4"/><circle cx="24" cy="26" r="3" fill="currentColor"/><path d="M24 39v5m-18-18h5m26 0h5"/></svg>
+              <strong>Residual endpoints</strong><span>Existing body structure</span>
+            </div>
+            <div class="measurement-target">
+              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 5 5 9-6 13c-4 9 2 14 15 14h7M23 14l9 14-7 8"/><circle cx="23" cy="14" r="3" fill="currentColor"/><circle cx="17" cy="27" r="3" fill="currentColor"/><circle cx="32" cy="41" r="3" fill="currentColor"/></svg>
+              <strong>Prosthesis landmarks</strong><span>Supported function</span>
+            </div>
+            <div class="measurement-target">
+              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="m24 4 15 10 3 18-18 12L6 32l3-18Zm0 0-8 20 8 20 8-20ZM9 14l23 10L6 32m33-18L16 24l26 8M9 14h30M6 32h36"/></svg>
+              <strong>Fitted body surfaces</strong><span>Reference-relative consistency</span>
+            </div>
+          </div>
+          <p class="measurement-summary">The contribution lies in the combined measurement and evaluation capabilities, rather than large-cohort model training or broad population coverage.</p>
+        </div>
 
-        const openLightbox = () => {
-          preview.src = image.currentSrc || image.src;
-          preview.alt = image.alt;
-          lightbox.classList.add("open");
-        };
+        <div class="cohort-repeats">
+          <div class="observation-flow" aria-label="Five participants provide 136 repeated synchronized tests, recorded in eight camera views per test">
+            <div><strong>5</strong><span>participants</span></div><span class="flow-symbol" aria-hidden="true">→</span>
+            <div><strong>136</strong><span>repeated tests</span></div><span class="flow-symbol" aria-hidden="true">×</span>
+            <div><strong>8</strong><span>views per test</span></div>
+          </div>
+          <p><strong>Participants remain the unit of between-person variability.</strong> Tests and camera views provide repeated observations of the same cohort.</p>
+        </div>
+        <div class="cohort-diagnostics" aria-label="Analyses of cohort variation"><span>Participant-equal summaries</span><span>Leave-one-participant-out sensitivity</span><span>Condition-specific diagnostics</span><a href="assets/LDBody_ICLR2027.pdf#page=8" target="_blank" rel="noopener noreferrer">Analyses in the paper &amp; Appendix F <span aria-hidden="true">↗</span></a></div>
+      </div>
+    </section>
 
-        image.addEventListener("click", openLightbox);
-        image.addEventListener("keydown", (event) => {
-          if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            openLightbox();
-          }
-        });
-      });
+    <section class="section" id="paper" aria-labelledby="paper-title">
+      <div class="wrap">
+        <div class="section-head"><div><p class="kicker">The paper</p><h2 id="paper-title">Making diverse bodies explicit evaluation targets</h2></div></div>
+        <div class="abstract">
+          <p>Human pose and mesh benchmarks largely assume limb-complete bodies. LDBody supports evaluation of residual anatomy, prosthesis-supported motion, and variation in body proportions through two complementary components: <strong>LDBody Images</strong> and <strong>LDBody Motion</strong>. Together, they cover limb differences, dwarfism, and multiple prosthesis types.</p>
+          <p>The annotation framework distinguishes body joints, residual-limb endpoints, and prosthesis-supported landmarks under a protocol guided by internationally accredited Para Athletics classifiers. The image component adds prosthesis annotations to 8,866 LDPose images while retaining existing body-joint and residual-limb labels. The motion component combines eight synchronized RGB views with Vicon-derived keypoints and Vicon-constrained fitted body meshes.</p>
+          <p>Benchmarks cover 2D pose, multi-view 3D pose, residual-limb localization, and human mesh recovery. The evaluated cases reveal persistent errors at residual endpoints and affected distal joints. Similar joint errors can also coexist with substantially different fitted-surface agreement, motivating separate evaluation of these targets.</p>
+        </div>
+        <p class="paper-meta"><a href="assets/LDBody_ICLR2027.pdf" target="_blank" rel="noopener noreferrer">Anonymous manuscript and appendices</a> · 40 pages · PDF, 8.9 MB</p>
+      </div>
+    </section>
 
-      closeButton.addEventListener("click", closeLightbox);
-      lightbox.addEventListener("click", (event) => {
-        if (event.target === lightbox) {
-          closeLightbox();
-        }
-      });
-      document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
-          closeLightbox();
-        }
-      });
-    })();
-  </script>
+    <section class="section tint" id="dataset" aria-labelledby="dataset-title">
+      <div class="wrap">
+        <div class="section-head"><div><p class="kicker">One dataset, shared definitions</p><h2 id="dataset-title">Images and calibrated motion</h2></div><p>Complementary visual coverage and geometric references for pose and body mesh evaluation.</p></div>
+        <div class="two-col">
+          <article class="card accent">
+            <span class="label">LDBody Motion</span><h3>Real movements, synchronized views</h3>
+            <p>136 synchronized tests from five adult male participants with lower-limb terminal deficiency form the reported motion benchmark: three with transtibial and two with transfemoral deficiency.</p>
+            <ul><li>1,088 view-specific videos and 963,104 RGB frames.</li><li>120 prosthesis-worn and 16 non-worn tests.</li><li>Static/postural, gait/locomotion, transitional/functional, and running/sport dynamic activities.</li><li>Vicon-derived 2D/3D keypoints and fitted mesh references.</li></ul>
+          </article>
+          <article class="card image-component">
+            <span class="label">LDBody Images</span><h3>Broader visual diversity</h3>
+            <p>8,866 selected LDPose images are extended with visible, functionally relevant prosthesis-supported landmarks while preserving existing body-joint and residual-limb annotations.</p>
+            <ul><li>Upper- and lower-limb differences and varied body proportions.</li><li>Diverse activities, scenes, clothing, viewpoints, and prosthesis types.</li><li>Shared landmark semantics across image and motion components.</li><li>The source images retain their original access and licensing conditions.</li></ul>
+          </article>
+        </div>
+        <div class="facts" aria-label="Capture specifications"><span>RGB: 2048 × 1080 at 50 fps</span><span>Vicon: 100 Hz</span><span>Full-body Plug-in Gait markers</span><span>Four additional residual-limb markers</span></div>
+        <p class="table-note">Motion counts follow Section 3.4 and Appendix C.1. Multiple camera views observe the same tests; they do not represent additional independent participants.</p>
+      </div>
+    </section>
+
+    <section class="section" id="motion-examples" aria-labelledby="examples-title">
+      <div class="wrap">
+        <div class="section-head"><div><p class="kicker">LDBody Motion examples</p><h2 id="examples-title">From synchronized video to 3D references</h2></div><p>The AP001 lunges sequence illustrates the capture setup, camera views, and Vicon-derived annotation layers.</p></div>
+        <div class="video-stack">
+          <div class="paired-image-grid">
+            <figure class="media-card paired-image-module"><button class="zoom-button" type="button" aria-label="Enlarge: Fitted body mesh and RGB and Vicon camera positions in the capture volume"><img src="assets/ldmotion/hero_mesh_vicon_v1.jpg" alt="Fitted body mesh and RGB and Vicon camera positions in the capture volume" width="2559" height="1555" loading="lazy" decoding="async"></button><figcaption>Calibrated camera layout and a fitted body mesh in Vicon space.</figcaption></figure>
+            <figure class="media-card paired-image-module"><button class="zoom-button" type="button" aria-label="Enlarge: Participant example with a prosthesis, residual limb, and the prosthetic device"><img src="assets/AP001.png" alt="Participant example with a prosthesis, residual limb, and the prosthetic device" width="1280" height="720" loading="lazy" decoding="async"></button><figcaption>Example with a prosthesis, residual-limb anatomy, and the prosthetic device.</figcaption></figure>
+          </div>
+          <figure class="media-card">
+            <video controls muted playsinline preload="none" poster="assets/posters/motion-rgb.jpg" aria-label="Eight synchronized RGB views of the AP001 lunges sequence">
+      <source src="assets/ldmotion/02_Lunges_55788786-60416142.face_mosaic.rot180_grid4x2.web.mp4" type="video/mp4">
+      Your browser does not support this video. <a href="assets/ldmotion/02_Lunges_55788786-60416142.face_mosaic.rot180_grid4x2.web.mp4">Download the video</a>.
+    </video>
+            <figcaption><strong>Eight synchronized RGB views.</strong> The same movement is recorded from calibrated cameras around the capture volume.</figcaption>
+          </figure>
+          <figure class="media-card">
+            <video controls muted playsinline preload="none" poster="assets/posters/motion-overlay.jpg" aria-label="Vicon-derived 2D keypoints projected into the eight RGB camera views">
+      <source src="assets/ldmotion/02_Lunges_openpose25_overlay.web.mp4" type="video/mp4">
+      Your browser does not support this video. <a href="assets/ldmotion/02_Lunges_openpose25_overlay.web.mp4">Download the video</a>.
+    </video>
+            <figcaption><strong>Calibrated 2D projections.</strong> Vicon-derived body keypoints and residual-limb annotations are projected into synchronized RGB frames.</figcaption>
+          </figure>
+          <figure class="media-card">
+            <div class="paired-video-grid">
+              <div class="paired-video-module"><video controls muted playsinline preload="none" poster="assets/posters/motion-3d.jpg" aria-label="Vicon markers, body keypoints, and residual endpoint in 3D">
+      <source src="assets/ldmotion/02_Lunges.vicon_markers_openpose25_3d.h264.mp4" type="video/mp4">
+      Your browser does not support this video. <a href="assets/ldmotion/02_Lunges.vicon_markers_openpose25_3d.h264.mp4">Download the video</a>.
+    </video><span class="paired-video-label">Body keypoints (orange), residual-limb annotation (pink), and Vicon markers (gray).</span></div>
+              <div class="paired-video-module"><video controls muted playsinline preload="none" poster="assets/posters/motion-cameras.jpg" aria-label="Vicon and RGB cameras surrounding the 3D keypoint reference">
+      <source src="assets/ldmotion/02_Lunges.camera_wide.vicon_markers_openpose25_3d.h264.mp4" type="video/mp4">
+      Your browser does not support this video. <a href="assets/ldmotion/02_Lunges.camera_wide.vicon_markers_openpose25_3d.h264.mp4">Download the video</a>.
+    </video><span class="paired-video-label">The same 3D reference with the relative positions of Vicon and RGB cameras.</span></div>
+            </div>
+            <figcaption><strong>Vicon-space 3D references.</strong> Body joints and residual endpoints remain separate annotation targets.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section tint" id="annotations" aria-labelledby="annotations-title">
+      <div class="wrap">
+        <div class="section-head"><div><p class="kicker">Expert-guided annotations</p><h2 id="annotations-title">Three distinct landmark types</h2></div><p>Shared definitions preserve the distinction between residual anatomy and prosthesis-supported function.</p></div>
+        <div class="cards">
+          <article class="card"><span class="label">01 · Body joints</span><h3>Standard body landmarks</h3><p>Body joints follow standard pose layouts. Motion exports provide OpenPose-style 25-body-slot and COCO-style 17-body-slot layouts, each extended with eight residual-limb slots.</p></article>
+          <article class="card"><span class="label">02 · Residual anatomy</span><h3>Residual-limb endpoints</h3><p>Endpoints identify existing body structure and are evaluated separately. In non-worn cases, unavailable distal keypoints remain unlabeled.</p></article>
+          <article class="card"><span class="label">03 · Supported function</span><h3>Prosthesis landmarks</h3><p>Visible, functionally relevant standard-layout landmarks are added on worn prostheses while retaining residual endpoints. These are functional targets rather than anatomical joints.</p></article>
+        </div>
+        <div class="paired-image-grid annotation-media">
+          <figure class="media-card"><button class="zoom-button" type="button" aria-label="Enlarge: Body-joint and residual-limb annotation definitions inherited from LDPose"><img src="assets/annotation.jpg" alt="Body-joint and residual-limb annotation definitions inherited from LDPose" width="1280" height="720" loading="lazy" decoding="async"></button><figcaption>Body-joint and residual-limb annotation definitions inherited from LDPose.</figcaption></figure>
+          <figure class="media-card"><button class="zoom-button" type="button" aria-label="Enlarge: Example of residual-limb and prosthesis-supported landmark annotations"><img src="assets/ldmotion/ldpose_prosthesis_skeleton.jpg" alt="Example of residual-limb and prosthesis-supported landmark annotations" width="773" height="522" loading="lazy" decoding="async"></button><figcaption>LDBody Images extends these annotations with prosthesis-supported landmarks.</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="mesh" aria-labelledby="mesh-title">
+      <div class="wrap">
+        <div class="section-head"><div><p class="kicker">Vicon-constrained fitting</p><h2 id="mesh-title">Anatomical and kinematic mesh references</h2></div><p>Two fitted-reference branches support separate assessment of residual anatomy and prosthesis-supported motion.</p></div>
+        <div class="two-col mesh-description">
+          <article class="card"><h3>Anatomical reference</h3><p>Represents residual-limb body structure. Fitting uses Vicon-derived body keypoints and valid residual-endpoint constraints. Evaluation uses anatomically present joints and residual-topology vertices.</p></article>
+          <article class="card"><h3>Kinematic reference</h3><p>Retains a standard full-body layout for prosthesis-supported motion. Fitting uses functional keypoints, including available prosthesis-supported landmarks.</p></article>
+        </div>
+        <div class="mesh-demo-intro" id="mesh-demos">
+          <p class="kicker">10 motion demonstrations · AP001–AP005</p>
+          <h3>Five participants, two tasks each</h3>
+          <p>Two distinct movements per participant show the latest Vicon-assisted mesh fits. The 10 clips include 9 prosthesis-worn cases with paired gold full-body and blue residual-limb meshes, plus 1 non-worn case showing the residual-limb mesh. Browse each participant’s two tasks below.</p>
+          <ul class="mesh-legend" aria-label="Mesh demonstration color legend">
+            <li><span class="mesh-swatch full" aria-hidden="true"></span>Full-body mesh</li>
+            <li><span class="mesh-swatch residual" aria-hidden="true"></span>Residual-limb mesh</li>
+            <li><span class="mesh-swatch markers" aria-hidden="true"></span>Vicon markers</li>
+            <li><span class="mesh-swatch pose" aria-hidden="true"></span>Vicon pose</li>
+            <li><span class="mesh-swatch residual-markers" aria-hidden="true"></span>Residual markers</li>
+            <li><span class="mesh-swatch endpoint" aria-hidden="true"></span>Residual endpoint</li>
+          </ul>
+        </div>
+        <nav class="mesh-participant-nav" aria-label="Jump to participant demonstrations"><a href="#mesh-ap001">AP001</a><a href="#mesh-ap002">AP002</a><a href="#mesh-ap003">AP003</a><a href="#mesh-ap004">AP004</a><a href="#mesh-ap005">AP005</a></nav>
+        <section class="mesh-participant-group" id="mesh-ap001" aria-labelledby="mesh-ap001-title">
+          <div class="mesh-participant-heading"><h4 id="mesh-ap001-title">AP001</h4><p>Transtibial · Left-side deficiency · 2 tasks</p></div>
+          <div class="mesh-demo-grid" aria-label="Two motion demonstrations for AP001">
+            <article class="mesh-demo-card" id="mesh-ap001-d07">
+              <div class="mesh-demo-heading">
+                <div><p class="kicker">AP001 · Task 1 of 2</p><h5>Sit to stand</h5></div>
+                <span class="mesh-condition non-worn">Prosthesis not worn</span>
+              </div>
+              <video controls muted playsinline preload="none" poster="assets/mesh-demos-two-tasks-20260928/AP001_22_Prosthesis_Off_Sit_to_Stand_55deg_poster.jpg" width="960" height="960" aria-label="AP001: Sit to stand, prosthesis not worn">
+                <source src="assets/mesh-demos-two-tasks-20260928/AP001_22_Prosthesis_Off_Sit_to_Stand_55deg_web.mp4" type="video/mp4">
+                Your browser does not support embedded video. <a href="assets/mesh-demos-two-tasks-20260928/AP001_22_Prosthesis_Off_Sit_to_Stand_55deg.mp4">Download the video</a>.
+              </video>
+              <div class="mesh-demo-controls">
+                <label>Quality <select class="mesh-quality" aria-label="Video quality for AP001, Sit to stand"><option value="assets/mesh-demos-two-tasks-20260928/AP001_22_Prosthesis_Off_Sit_to_Stand_55deg_web.mp4">Web · 960 px</option><option value="assets/mesh-demos-two-tasks-20260928/AP001_22_Prosthesis_Off_Sit_to_Stand_55deg.mp4">Full · 1000 px</option></select></label>
+                <a href="assets/mesh-demos-two-tasks-20260928/AP001_22_Prosthesis_Off_Sit_to_Stand_55deg.mp4" download>Download full video</a>
+              </div>
+              <p class="mesh-demo-caption">3.2 s · Fixed 55° orientation · Recorded movement speed. Residual-limb mesh shown for the non-worn condition.</p>
+            </article>
+            <article class="mesh-demo-card" id="mesh-ap001-n01">
+              <div class="mesh-demo-heading">
+                <div><p class="kicker">AP001 · Task 2 of 2</p><h5>Lunges</h5></div>
+                <span class="mesh-condition">Prosthesis worn</span>
+              </div>
+              <video controls muted playsinline preload="none" poster="assets/mesh-demos-two-tasks-20260928/AP001_02_Lunges_55deg_poster.jpg" width="960" height="600" aria-label="AP001: Lunges, prosthesis worn">
+                <source src="assets/mesh-demos-two-tasks-20260928/AP001_02_Lunges_55deg_web.mp4" type="video/mp4">
+                Your browser does not support embedded video. <a href="assets/mesh-demos-two-tasks-20260928/AP001_02_Lunges_55deg.mp4">Download the video</a>.
+              </video>
+              <div class="mesh-demo-controls">
+                <label>Quality <select class="mesh-quality" aria-label="Video quality for AP001, Lunges"><option value="assets/mesh-demos-two-tasks-20260928/AP001_02_Lunges_55deg_web.mp4">Web · 960 px</option><option value="assets/mesh-demos-two-tasks-20260928/AP001_02_Lunges_55deg.mp4">Full · 1600 px</option></select></label>
+                <a href="assets/mesh-demos-two-tasks-20260928/AP001_02_Lunges_55deg.mp4" download>Download full video</a>
+              </div>
+              <p class="mesh-demo-caption">3.2 s · Fixed 55° orientation · Recorded movement speed. Full-body and residual-limb meshes share the same camera and scale.</p>
+            </article>
+          </div>
+        </section>
+        <section class="mesh-participant-group" id="mesh-ap002" aria-labelledby="mesh-ap002-title">
+          <div class="mesh-participant-heading"><h4 id="mesh-ap002-title">AP002</h4><p>Transfemoral · Left-side deficiency · 2 tasks</p></div>
+          <div class="mesh-demo-grid" aria-label="Two motion demonstrations for AP002">
+            <article class="mesh-demo-card" id="mesh-ap002-d06">
+              <div class="mesh-demo-heading">
+                <div><p class="kicker">AP002 · Task 1 of 2</p><h5>Knee extension</h5></div>
+                <span class="mesh-condition">Prosthesis worn</span>
+              </div>
+              <video controls muted playsinline preload="none" poster="assets/mesh-demos-two-tasks-20260928/AP002_21_Knee_Extension_55deg_poster.jpg" width="960" height="600" aria-label="AP002: Knee extension, prosthesis worn">
+                <source src="assets/mesh-demos-two-tasks-20260928/AP002_21_Knee_Extension_55deg_web.mp4" type="video/mp4">
+                Your browser does not support embedded video. <a href="assets/mesh-demos-two-tasks-20260928/AP002_21_Knee_Extension_55deg.mp4">Download the video</a>.
+              </video>
+              <div class="mesh-demo-controls">
+                <label>Quality <select class="mesh-quality" aria-label="Video quality for AP002, Knee extension"><option value="assets/mesh-demos-two-tasks-20260928/AP002_21_Knee_Extension_55deg_web.mp4">Web · 960 px</option><option value="assets/mesh-demos-two-tasks-20260928/AP002_21_Knee_Extension_55deg.mp4">Full · 1600 px</option></select></label>
+                <a href="assets/mesh-demos-two-tasks-20260928/AP002_21_Knee_Extension_55deg.mp4" download>Download full video</a>
+              </div>
+              <p class="mesh-demo-caption">3.3 s · Fixed 55° orientation · Recorded movement speed. Full-body and residual-limb meshes share the same camera and scale.</p>
+            </article>
+            <article class="mesh-demo-card" id="mesh-ap002-n02">
+              <div class="mesh-demo-heading">
+                <div><p class="kicker">AP002 · Task 2 of 2</p><h5>Bent-over twist</h5></div>
+                <span class="mesh-condition">Prosthesis worn</span>
+              </div>
+              <video controls muted playsinline preload="none" poster="assets/mesh-demos-two-tasks-20260928/AP002_05_Bent_Over_Twist_55deg_poster.jpg" width="960" height="600" aria-label="AP002: Bent-over twist, prosthesis worn">
+                <source src="assets/mesh-demos-two-tasks-20260928/AP002_05_Bent_Over_Twist_55deg_web.mp4" type="video/mp4">
+                Your browser does not support embedded video. <a href="assets/mesh-demos-two-tasks-20260928/AP002_05_Bent_Over_Twist_55deg.mp4">Download the video</a>.
+              </video>
+              <div class="mesh-demo-controls">
+                <label>Quality <select class="mesh-quality" aria-label="Video quality for AP002, Bent-over twist"><option value="assets/mesh-demos-two-tasks-20260928/AP002_05_Bent_Over_Twist_55deg_web.mp4">Web · 960 px</option><option value="assets/mesh-demos-two-tasks-20260928/AP002_05_Bent_Over_Twist_55deg.mp4">Full · 1600 px</option></select></label>
+                <a href="assets/mesh-demos-two-tasks-20260928/AP002_05_Bent_Over_Twist_55deg.mp4" download>Download full video</a>
+              </div>
+              <p class="mesh-demo-caption">2.6 s · Fixed 55° orientation · Recorded movement speed. Full-body and residual-limb meshes share the same camera and scale.</p>
+            </article>
+          </div>
+        </section>
+        <section class="mesh-participant-group" id="mesh-ap003" aria-labelledby="mesh-ap003-title">
+          <div class="mesh-participant-heading"><h4 id="mesh-ap003-title">AP003</h4><p>Transtibial · Left-side deficiency · 2 tasks</p></div>
+          <div class="mesh-demo-grid" aria-label="Two motion demonstrations for AP003">
+            <article class="mesh-demo-card" id="mesh-ap003-n09">
+              <div class="mesh-demo-heading">
+                <div><p class="kicker">AP003 · Task 1 of 2</p><h5>Single-leg hopping</h5></div>
+                <span class="mesh-condition">Prosthesis worn</span>
+              </div>
+              <video controls muted playsinline preload="none" poster="assets/mesh-demos-two-tasks-20260928/AP003_08_Single_Leg_Hopping_55deg_poster.jpg" width="960" height="600" aria-label="AP003: Single-leg hopping, prosthesis worn">
+                <source src="assets/mesh-demos-two-tasks-20260928/AP003_08_Single_Leg_Hopping_55deg_web.mp4" type="video/mp4">
+                Your browser does not support embedded video. <a href="assets/mesh-demos-two-tasks-20260928/AP003_08_Single_Leg_Hopping_55deg.mp4">Download the video</a>.
+              </video>
+              <div class="mesh-demo-controls">
+                <label>Quality <select class="mesh-quality" aria-label="Video quality for AP003, Single-leg hopping"><option value="assets/mesh-demos-two-tasks-20260928/AP003_08_Single_Leg_Hopping_55deg_web.mp4">Web · 960 px</option><option value="assets/mesh-demos-two-tasks-20260928/AP003_08_Single_Leg_Hopping_55deg.mp4">Full · 1600 px</option></select></label>
+                <a href="assets/mesh-demos-two-tasks-20260928/AP003_08_Single_Leg_Hopping_55deg.mp4" download>Download full video</a>
+              </div>
+              <p class="mesh-demo-caption">3.2 s · Fixed 55° orientation · Recorded movement speed. Full-body and residual-limb meshes share the same camera and scale.</p>
+            </article>
+            <article class="mesh-demo-card" id="mesh-ap003-n10">
+              <div class="mesh-demo-heading">
+                <div><p class="kicker">AP003 · Task 2 of 2</p><h5>Object pickup</h5></div>
+                <span class="mesh-condition">Prosthesis worn</span>
+              </div>
+              <video controls muted playsinline preload="none" poster="assets/mesh-demos-two-tasks-20260928/AP003_17_Pick_Up_Object_55deg_poster.jpg" width="960" height="600" aria-label="AP003: Object pickup, prosthesis worn">
+                <source src="assets/mesh-demos-two-tasks-20260928/AP003_17_Pick_Up_Object_55deg_web.mp4" type="video/mp4">
+                Your browser does not support embedded video. <a href="assets/mesh-demos-two-tasks-20260928/AP003_17_Pick_Up_Object_55deg.mp4">Download the video</a>.
+              </video>
+              <div class="mesh-demo-controls">
+                <label>Quality <select class="mesh-quality" aria-label="Video quality for AP003, Object pickup"><option value="assets/mesh-demos-two-tasks-20260928/AP003_17_Pick_Up_Object_55deg_web.mp4">Web · 960 px</option><option value="assets/mesh-demos-two-tasks-20260928/AP003_17_Pick_Up_Object_55deg.mp4">Full · 1600 px</option></select></label>
+                <a href="assets/mesh-demos-two-tasks-20260928/AP003_17_Pick_Up_Object_55deg.mp4" download>Download full video</a>
+              </div>
+              <p class="mesh-demo-caption">2.1 s · Fixed 55° orientation · Recorded movement speed. Full-body and residual-limb meshes share the same camera and scale.</p>
+            </article>
+          </div>
+        </section>
+        <section class="mesh-participant-group" id="mesh-ap004" aria-labelledby="mesh-ap004-title">
+          <div class="mesh-participant-heading"><h4 id="mesh-ap004-title">AP004</h4><p>Transtibial · Left-side deficiency · 2 tasks</p></div>
+          <div class="mesh-demo-grid" aria-label="Two motion demonstrations for AP004">
+            <article class="mesh-demo-card" id="mesh-ap004-n04">
+              <div class="mesh-demo-heading">
+                <div><p class="kicker">AP004 · Task 1 of 2</p><h5>Gait</h5></div>
+                <span class="mesh-condition">Prosthesis worn</span>
+              </div>
+              <video controls muted playsinline preload="none" poster="assets/mesh-demos-two-tasks-20260928/AP004_15_Gait2_55deg_poster.jpg" width="960" height="600" aria-label="AP004: Gait, prosthesis worn">
+                <source src="assets/mesh-demos-two-tasks-20260928/AP004_15_Gait2_55deg_web.mp4" type="video/mp4">
+                Your browser does not support embedded video. <a href="assets/mesh-demos-two-tasks-20260928/AP004_15_Gait2_55deg.mp4">Download the video</a>.
+              </video>
+              <div class="mesh-demo-controls">
+                <label>Quality <select class="mesh-quality" aria-label="Video quality for AP004, Gait"><option value="assets/mesh-demos-two-tasks-20260928/AP004_15_Gait2_55deg_web.mp4">Web · 960 px</option><option value="assets/mesh-demos-two-tasks-20260928/AP004_15_Gait2_55deg.mp4">Full · 1600 px</option></select></label>
+                <a href="assets/mesh-demos-two-tasks-20260928/AP004_15_Gait2_55deg.mp4" download>Download full video</a>
+              </div>
+              <p class="mesh-demo-caption">2.5 s · Fixed 55° orientation; camera follows the pelvis horizontally · Recorded movement speed. Full-body and residual-limb meshes share the same camera and scale.</p>
+            </article>
+            <article class="mesh-demo-card" id="mesh-ap004-n05">
+              <div class="mesh-demo-heading">
+                <div><p class="kicker">AP004 · Task 2 of 2</p><h5>Leg swings</h5></div>
+                <span class="mesh-condition">Prosthesis worn</span>
+              </div>
+              <video controls muted playsinline preload="none" poster="assets/mesh-demos-two-tasks-20260928/AP004_06_Leg_Swings_55deg_poster.jpg" width="960" height="600" aria-label="AP004: Leg swings, prosthesis worn">
+                <source src="assets/mesh-demos-two-tasks-20260928/AP004_06_Leg_Swings_55deg_web.mp4" type="video/mp4">
+                Your browser does not support embedded video. <a href="assets/mesh-demos-two-tasks-20260928/AP004_06_Leg_Swings_55deg.mp4">Download the video</a>.
+              </video>
+              <div class="mesh-demo-controls">
+                <label>Quality <select class="mesh-quality" aria-label="Video quality for AP004, Leg swings"><option value="assets/mesh-demos-two-tasks-20260928/AP004_06_Leg_Swings_55deg_web.mp4">Web · 960 px</option><option value="assets/mesh-demos-two-tasks-20260928/AP004_06_Leg_Swings_55deg.mp4">Full · 1600 px</option></select></label>
+                <a href="assets/mesh-demos-two-tasks-20260928/AP004_06_Leg_Swings_55deg.mp4" download>Download full video</a>
+              </div>
+              <p class="mesh-demo-caption">3.0 s · Fixed 55° orientation · Recorded movement speed. Full-body and residual-limb meshes share the same camera and scale.</p>
+            </article>
+          </div>
+        </section>
+        <section class="mesh-participant-group" id="mesh-ap005" aria-labelledby="mesh-ap005-title">
+          <div class="mesh-participant-heading"><h4 id="mesh-ap005-title">AP005</h4><p>Transfemoral · Right-side deficiency · 2 tasks</p></div>
+          <div class="mesh-demo-grid" aria-label="Two motion demonstrations for AP005">
+            <article class="mesh-demo-card" id="mesh-ap005-d05">
+              <div class="mesh-demo-heading">
+                <div><p class="kicker">AP005 · Task 1 of 2</p><h5>High-knee stepping</h5></div>
+                <span class="mesh-condition">Prosthesis worn</span>
+              </div>
+              <video controls muted playsinline preload="none" poster="assets/mesh-demos-two-tasks-20260928/AP005_14_High_Knee_Stepping_55deg_poster.jpg" width="960" height="600" aria-label="AP005: High-knee stepping, prosthesis worn">
+                <source src="assets/mesh-demos-two-tasks-20260928/AP005_14_High_Knee_Stepping_55deg_web.mp4" type="video/mp4">
+                Your browser does not support embedded video. <a href="assets/mesh-demos-two-tasks-20260928/AP005_14_High_Knee_Stepping_55deg.mp4">Download the video</a>.
+              </video>
+              <div class="mesh-demo-controls">
+                <label>Quality <select class="mesh-quality" aria-label="Video quality for AP005, High-knee stepping"><option value="assets/mesh-demos-two-tasks-20260928/AP005_14_High_Knee_Stepping_55deg_web.mp4">Web · 960 px</option><option value="assets/mesh-demos-two-tasks-20260928/AP005_14_High_Knee_Stepping_55deg.mp4">Full · 1600 px</option></select></label>
+                <a href="assets/mesh-demos-two-tasks-20260928/AP005_14_High_Knee_Stepping_55deg.mp4" download>Download full video</a>
+              </div>
+              <p class="mesh-demo-caption">2.6 s · Fixed 55° orientation · Recorded movement speed. Full-body and residual-limb meshes share the same camera and scale. One complete right knee raise, shown at the recorded speed.</p>
+            </article>
+            <article class="mesh-demo-card" id="mesh-ap005-n08">
+              <div class="mesh-demo-heading">
+                <div><p class="kicker">AP005 · Task 2 of 2</p><h5>Race-ready stance</h5></div>
+                <span class="mesh-condition">Prosthesis worn</span>
+              </div>
+              <video controls muted playsinline preload="none" poster="assets/mesh-demos-two-tasks-20260928/AP005_25_Race_Ready_Stance_55deg_poster.jpg" width="960" height="600" aria-label="AP005: Race-ready stance, prosthesis worn">
+                <source src="assets/mesh-demos-two-tasks-20260928/AP005_25_Race_Ready_Stance_55deg_web.mp4" type="video/mp4">
+                Your browser does not support embedded video. <a href="assets/mesh-demos-two-tasks-20260928/AP005_25_Race_Ready_Stance_55deg.mp4">Download the video</a>.
+              </video>
+              <div class="mesh-demo-controls">
+                <label>Quality <select class="mesh-quality" aria-label="Video quality for AP005, Race-ready stance"><option value="assets/mesh-demos-two-tasks-20260928/AP005_25_Race_Ready_Stance_55deg_web.mp4">Web · 960 px</option><option value="assets/mesh-demos-two-tasks-20260928/AP005_25_Race_Ready_Stance_55deg.mp4">Full · 1600 px</option></select></label>
+                <a href="assets/mesh-demos-two-tasks-20260928/AP005_25_Race_Ready_Stance_55deg.mp4" download>Download full video</a>
+              </div>
+              <p class="mesh-demo-caption">2.0 s · Fixed 55° orientation · Recorded movement speed. Full-body and residual-limb meshes share the same camera and scale.</p>
+            </article>
+          </div>
+        </section>
+        <aside class="mesh-demo-method" aria-labelledby="mesh-method-title">
+          <h3 id="mesh-method-title">About these demonstrations</h3>
+          <p>These qualitative clips show Vicon-assisted joint and foot alignment, residual-limb endpoint fitting, and gentle head correction. Vicon also supplies the displayed markers and skeleton, so the videos do not establish independent prediction accuracy. The full-body fit does not use the residual endpoint; an endpoint shown on that view is an overlay only.</p>
+          <p>Camera orientation and image scale remain fixed throughout each clip, and paired meshes use the same camera and scale. In AP004’s gait clip, the camera follows the measured pelvis in the horizontal plane while preserving vertical motion; mesh and measurement coordinates remain unchanged. Scale may differ between clips to accommodate movement extent, with no normalization of participant height. In AP002, full-body calf shortening is distributed smoothly while preserving transverse shape and the fitted ankle and foot.</p>
+        </aside>
+        <p class="table-note">These are model-based fitted references, not anatomical surface scans. Mean vertex error measures agreement with the corresponding fitted surface. Appendix D reports reference-construction and sensitivity analyses.</p>
+      </div>
+    </section>
+
+    <section class="section tint" id="benchmarks" aria-labelledby="benchmarks-title">
+      <div class="wrap">
+        <div class="section-head"><div><p class="kicker">Results from the submitted paper</p><h2 id="benchmarks-title">Pose, endpoints, and fitted-surface consistency</h2></div><p>Tables 3–5 report separate targets and protocols. Fine-tuning uses LDBody Images; motion recordings are held out from fine-tuning.</p></div>
+        <div class="benchmark-block">
+          <h3>2D keypoint estimation</h3>
+          <div class="table-scroll" role="region" aria-label="2D pose results; scroll horizontally for all metrics" tabindex="0">
+            <table id="table-2d">
+              <caption>Table 3 · COCO-style AP / AR, 0–100 scale. Higher is better.</caption>
+              <thead><tr><th rowspan="2" scope="col">Method</th><th rowspan="2" scope="col">Fine-tuning</th><th colspan="6" scope="colgroup">LDBody Images</th><th colspan="6" scope="colgroup">LDBody Motion</th></tr>
+                <tr><th scope="col">AP</th><th scope="col">AP<sup>50</sup></th><th scope="col">AP<sup>75</sup></th><th scope="col">AR</th><th scope="col">AR<sup>50</sup></th><th scope="col">AR<sup>75</sup></th><th scope="col">AP</th><th scope="col">AP<sup>50</sup></th><th scope="col">AP<sup>75</sup></th><th scope="col">AR</th><th scope="col">AR<sup>50</sup></th><th scope="col">AR<sup>75</sup></th></tr></thead>
+              <tbody><tr class="group-start"><th scope="row">YOLOPose-l</th><td>No</td><td>58.4</td><td>84.4</td><td>67.7</td><td>64.2</td><td>87.9</td><td>72.5</td><td>45.7</td><td>73.5</td><td>50.8</td><td>51.8</td><td>82.9</td><td>56.8</td></tr><tr><th scope="row">YOLOPose-l</th><td>Yes</td><td>62.8</td><td>82.3</td><td>68.6</td><td>65.8</td><td>84.8</td><td>71.2</td><td>32.7</td><td>46.2</td><td>35.6</td><td>35.4</td><td>49.2</td><td>38.0</td></tr><tr class="group-start"><th scope="row">RTMPose-l</th><td>No</td><td>63.3</td><td>87.9</td><td>74.1</td><td>67.3</td><td>88.3</td><td>76.4</td><td>69.1</td><td>97.8</td><td>82.6</td><td>72.8</td><td>98.6</td><td>86.2</td></tr><tr><th scope="row">RTMPose-l</th><td>Yes</td><td>77.4</td><td>89.9</td><td>84.4</td><td>79.7</td><td>90.3</td><td>85.0</td><td>72.6</td><td>96.9</td><td>81.3</td><td>77.6</td><td>97.6</td><td>84.2</td></tr><tr class="group-start"><th scope="row">ViTPose-l</th><td>No</td><td>65.0</td><td>88.9</td><td>76.0</td><td>69.2</td><td>89.0</td><td>78.7</td><td>71.8</td><td>98.8</td><td>87.1</td><td>75.5</td><td>99.0</td><td>90.2</td></tr><tr><th scope="row">ViTPose-l</th><td>Yes</td><td><strong>80.5</strong></td><td><strong>90.8</strong></td><td><strong>86.4</strong></td><td><strong>82.9</strong></td><td><strong>91.0</strong></td><td><strong>88.0</strong></td><td><strong>81.9</strong></td><td><strong>99.0</strong></td><td><strong>91.4</strong></td><td><strong>85.9</strong></td><td><strong>99.4</strong></td><td><strong>93.4</strong></td></tr></tbody>
+            </table>
+          </div>
+          <p class="table-note">Evaluation follows the LDPose 25-keypoint schema (17 body slots + 8 residual-limb slots). Bold indicates the highest score per metric and setting. The two components differ in visual conditions and reference availability, so their scores do not directly measure relative subset difficulty.</p>
+        </div>
+        <div class="benchmark-block">
+          <h3>Multi-view 3D keypoint estimation</h3>
+          <div class="table-scroll" role="region" aria-label="3D pose results" tabindex="0">
+            <table id="table-3d"><caption>Table 4 · Errors in millimeters. Lower is better within the same evaluation target set.</caption>
+              <thead><tr><th scope="col">Method</th><th scope="col">Fine-tuning</th><th scope="col">Keypoint coverage</th><th scope="col">MPJPE ↓</th><th scope="col">PA-MPJPE ↓</th><th scope="col">Residual-endpoint error ↓</th></tr></thead>
+              <tbody><tr><th scope="row">YOLOPose-l</th><td>No</td><td>Standard</td><td>209.28</td><td>96.96</td><td>N/A</td></tr><tr><th scope="row">YOLOPose-l</th><td>Yes</td><td>Extended</td><td>594.64</td><td>130.72</td><td>375.94</td></tr><tr><th scope="row">RTMPose-l</th><td>No</td><td>Standard</td><td>47.89</td><td>45.10</td><td>N/A</td></tr><tr><th scope="row">RTMPose-l</th><td>Yes</td><td>Extended</td><td>58.83</td><td>53.35</td><td>110.0</td></tr><tr><th scope="row">ViTPose-l</th><td>No</td><td>Standard</td><td>46.07</td><td>43.56</td><td>N/A</td></tr><tr><th scope="row">ViTPose-l</th><td>Yes</td><td>Extended</td><td>50.25</td><td>47.61</td><td>90.12</td></tr></tbody>
+            </table>
+          </div>
+          <p class="table-note"><strong>Standard</strong> covers standard-layout keypoints; <strong>Extended</strong> also includes residual endpoints. Aggregate errors before and after fine-tuning use different target sets and are not a matched comparison over standard joints. N/A means no endpoint prediction, not zero error. Endpoint error must be interpreted alongside reconstruction coverage.</p>
+        </div>
+        <div class="benchmark-block">
+          <h3>Human mesh recovery</h3>
+          <div class="table-scroll" role="region" aria-label="Human mesh recovery results" tabindex="0">
+            <table id="table-mesh"><caption>Table 5 · Errors in millimeters. Kinematic and anatomical protocols are reported separately.</caption>
+              <thead><tr><th scope="col">Method</th><th scope="col">Fitted reference</th><th scope="col">MPJPE ↓</th><th scope="col">PA-MPJPE ↓</th><th scope="col">Residual-endpoint error ↓</th><th scope="col">MVE ↓</th></tr></thead>
+              <tbody><tr><th scope="row">TokenHMR</th><td>Kinematic</td><td>148.81</td><td>87.30</td><td>N/A</td><td>177.81</td></tr><tr><th scope="row">CameraHMR</th><td>Kinematic</td><td>229.97</td><td>120.71</td><td>N/A</td><td>198.53</td></tr><tr><th scope="row">PromptHMR</th><td>Kinematic</td><td><strong>148.09</strong></td><td><strong>87.25</strong></td><td>N/A</td><td><strong>107.44</strong></td></tr><tr class="separate-protocol"><th scope="row">ResiHMR<sup>†</sup></th><td>Anatomical</td><td>135.32</td><td>76.14</td><td>154.22</td><td>101.47</td></tr></tbody>
+            </table>
+          </div>
+          <p class="table-note"><sup>†</sup> ResiHMR uses present joints and residual-topology vertices and is not ranked against the kinematic rows. It also participates in anatomical-reference construction. Bold compares only the three kinematic rows. MVE measures reference-relative fitted-surface consistency, not scan-based surface accuracy.</p>
+        </div>
+        <div class="cards findings">
+          <article class="card"><h3>Endpoint errors persist</h3><p>Fine-tuned ViTPose-l reports 90.12 mm residual-endpoint error, compared with 110.0 mm for RTMPose-l and 375.94 mm for YOLOPose-l.</p></article>
+          <article class="card"><h3>Joint and surface errors differ</h3><p>TokenHMR and PromptHMR have similar joint errors, while their mean vertex errors are 177.81 mm and 107.44 mm under the kinematic protocol.</p></article>
+          <article class="card"><h3>Variation matters</h3><p>Appendix F examines participants, affected and contralateral sides, prosthesis conditions, movement categories, deficiency levels, and camera views.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="reviewer-examples" aria-labelledby="review-title">
+      <div class="wrap">
+        <div class="section-head"><div><p class="kicker">For ICLR 2027 reviewers</p><h2 id="review-title">Review materials and data access</h2></div><p>Appendix A describes the review archive, access tiers, and assets needed for reproducibility.</p></div>
+        <div class="review-panel">
+          <div>
+            <h3>Review-only archive</h3>
+            <p>The manuscript describes a password-protected, header-encrypted split 7-Zip archive with nominal 10 GB volumes. The case-sensitive password belongs in the accompanying review-restricted access note.</p>
+            <p class="access-note">This page provides the anonymous manuscript and selected visual examples. Review-archive access details are handled through the submission’s review-restricted materials.</p>
+            <a class="button primary" href="assets/LDBody_ICLR2027.pdf#page=14" target="_blank" rel="noopener noreferrer">Read Appendix A <span aria-hidden="true">↗</span></a>
+          </div>
+          <div>
+            <h3>Opening the split archive</h3>
+            <ol><li>Place all supplied volumes in one directory and keep their original names: <code>LDBody_raw.7z.001</code>, <code>LDBody_raw.7z.002</code>, and so on.</li><li>Test and extract from the first volume. Subsequent volumes are read automatically.</li><li>Enter the password at the interactive prompt. On macOS, use <code>7zz</code> if that is the installed executable.</li></ol>
+            <pre><code>7z t LDBody_raw.7z.001
+7z x LDBody_raw.7z.001 -oLDBody_extracted</code></pre>
+          </div>
+        </div>
+        <p class="table-note">As described in the manuscript, potentially identifiable motion assets are intended for approved non-commercial research under a data-use agreement. Derived annotations and metadata are planned for release under CC BY-NC-SA 4.0 where consent permits; source images and inherited annotations retain their original terms.</p>
+      </div>
+    </section>
+  </main>
+  <footer class="footer"><div class="wrap"><span>LDBody · ICLR 2027 anonymous submission</span><span>Paper under double-blind review</span></div></footer>
+  <dialog class="image-lightbox" aria-label="Expanded figure"><button class="lightbox-close" type="button" autofocus>Close ×</button><img alt=""></dialog>
 </body>
 </html>
