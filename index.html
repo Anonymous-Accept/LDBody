@@ -232,6 +232,38 @@
           <article class="card"><h3>Anatomical reference</h3><p>Represents residual-limb body structure. Fitting uses Vicon-derived body keypoints and valid residual-endpoint constraints. Evaluation uses anatomically present joints and residual-topology vertices.</p></article>
           <article class="card"><h3>Kinematic reference</h3><p>Retains a standard full-body layout for prosthesis-supported motion. Fitting uses functional keypoints, including available prosthesis-supported landmarks.</p></article>
         </div>
+        <article class="mesh-reference" id="mesh-reference-generation" aria-labelledby="mesh-reference-title">
+          <header class="mesh-reference-heading">
+            <h3 id="mesh-reference-title">Vicon-Constrained Mesh Reference Generation</h3>
+            <p class="mesh-reference-lead"><strong>LDBody’s meshes are measurement-constrained fitted references, not unrefined HMR predictions.</strong></p>
+          </header>
+          <div class="mesh-reference-grid">
+            <section aria-labelledby="mesh-reference-shape">
+              <h4 id="mesh-reference-shape">Constraining body shape as well as pose.</h4>
+              <p>In the marker-constrained fitting demonstrated on this page, image-based HMR provides the initialization. Vicon-derived joint centres and valid surface-marker trajectories then constrain body pose, global orientation, translation, and the body-shape parameters β. Marker-to-surface correspondences are represented by mesh triangles and barycentric coordinates and remain fixed after initial calibration. Minimizing the discrepancy between these model-attached points and the measured markers supplies a data constraint on the body surface and β, rather than leaving body shape determined solely by the image initializer. A single β is optimized and shared within each sequence, with temporal and initialization regularization stabilizing the fit.</p>
+            </section>
+            <section aria-labelledby="mesh-reference-precedent">
+              <h4 id="mesh-reference-precedent">An established approach to reference construction.</h4>
+              <p>AMASS uses MoSh++ to recover parametric human bodies from optical motion-capture markers and evaluates surface reconstruction against synchronized 4D scans <a class="mesh-reference-citation" href="#mesh-ref-1" aria-label="Reference 1: AMASS">[1]</a>. MOYO explicitly uses MoSh++-recovered SMPL-X parameters as ground truth <a class="mesh-reference-citation" href="#mesh-ref-2" aria-label="Reference 2: 3D Human Pose Estimation via Intuitive Physics">[2]</a>. These works provide a precedent for using motion-capture-fitted bodies as benchmark references. LDBody does not directly use MoSh++; our pipeline shares the principle of fitting a body model to measured marker evidence, while using image-based initialization, explicit joint constraints, and residual-limb-specific processing. The cited studies support this reference-construction approach, not an equivalent accuracy guarantee for our implementation.</p>
+            </section>
+            <section aria-labelledby="mesh-reference-targets">
+              <h4 id="mesh-reference-targets">Separate reference targets.</h4>
+              <p>The kinematic branch retains a standard body layout for prosthesis-supported motion, rather than reconstructing the device surface. The anatomical branch represents the remaining body and residual limb. Residual-endpoint constraints apply only to the anatomical branch. The local vertex refinements used in the demonstrations are distinguished from the underlying parameterized fits.</p>
+            </section>
+            <section aria-labelledby="mesh-reference-checks">
+              <h4 id="mesh-reference-checks">Checks reported in the submitted paper.</h4>
+              <p>Appendix D reports fitting residuals, shared-region discrepancies between branches, and reference sensitivity. In the fixed-prediction reference-swap experiment, the tested full-body methods retain their MVE ordering under HSMR- and PromptHMR-initialized references, although absolute MVE values change. Joint and endpoint metrics use Vicon-derived targets, whereas MVE measures agreement with the corresponding fitted surface. Because ResiHMR also contributes to anatomical-reference construction, its residual-topology results are reported separately, rather than used to claim a cross-topology performance winner <a class="mesh-reference-citation" href="#mesh-ref-3" aria-label="Reference 3: LDBody submitted manuscript">[3]</a>.</p>
+            </section>
+          </div>
+          <section class="mesh-reference-sources" aria-labelledby="mesh-reference-sources-title">
+            <h4 id="mesh-reference-sources-title">References</h4>
+            <ol>
+              <li id="mesh-ref-1">Mahmood et al. <a href="https://arxiv.org/html/1904.03278" target="_blank" rel="noopener noreferrer"><strong>AMASS: Archive of Motion Capture as Surface Shapes.</strong></a> ICCV 2019. Sections 3.2 and 4.</li>
+              <li id="mesh-ref-2">Tripathi et al. <a href="https://arxiv.org/html/2303.18246#A1" target="_blank" rel="noopener noreferrer"><strong>3D Human Pose Estimation via Intuitive Physics.</strong></a> CVPR 2023. Supplementary material, Appendix A: MoCap Yoga Dataset.</li>
+              <li id="mesh-ref-3"><a href="assets/LDBody_ICLR2027.pdf" target="_blank" rel="noopener noreferrer"><strong>LDBody: Benchmarking Human Pose and Mesh Recovery with Residual Limb and Prostheses.</strong></a> Submitted manuscript, Section 3.3, Table 5, and Appendix D (Tables 12–15).</li>
+            </ol>
+          </section>
+        </article>
         <div class="mesh-demo-intro" id="mesh-demos">
           <p class="kicker">10 motion demonstrations · AP001–AP005</p>
           <h3>Five participants, two tasks each</h3>
@@ -391,18 +423,18 @@
           <div class="mesh-demo-grid" aria-label="Two motion demonstrations for AP005">
             <article class="mesh-demo-card" id="mesh-ap005-d05">
               <div class="mesh-demo-heading">
-                <div><p class="kicker">AP005 · Task 1 of 2</p><h5>High-knee stepping</h5></div>
+                <div><p class="kicker">AP005 · Task 1 of 2</p><h5>Heel-to-butt running</h5></div>
                 <span class="mesh-condition">Prosthesis worn</span>
               </div>
-              <video controls muted playsinline preload="none" poster="assets/mesh-demos-two-tasks-20260928/AP005_14_High_Knee_Stepping_55deg_poster.jpg" width="960" height="600" aria-label="AP005: High-knee stepping, prosthesis worn">
-                <source src="assets/mesh-demos-two-tasks-20260928/AP005_14_High_Knee_Stepping_55deg_web.mp4" type="video/mp4">
-                Your browser does not support embedded video. <a href="assets/mesh-demos-two-tasks-20260928/AP005_14_High_Knee_Stepping_55deg.mp4">Download the video</a>.
+              <video controls muted playsinline preload="none" poster="assets/mesh-demos-two-tasks-20260928/AP005_16_Heel_To_Butt_Running_55deg_poster.jpg" width="960" height="600" aria-label="AP005: Heel-to-butt running, prosthesis worn">
+                <source src="assets/mesh-demos-two-tasks-20260928/AP005_16_Heel_To_Butt_Running_55deg_web.mp4" type="video/mp4">
+                Your browser does not support embedded video. <a href="assets/mesh-demos-two-tasks-20260928/AP005_16_Heel_To_Butt_Running_55deg.mp4">Download the video</a>.
               </video>
               <div class="mesh-demo-controls">
-                <label>Quality <select class="mesh-quality" aria-label="Video quality for AP005, High-knee stepping"><option value="assets/mesh-demos-two-tasks-20260928/AP005_14_High_Knee_Stepping_55deg_web.mp4">Web · 960 px</option><option value="assets/mesh-demos-two-tasks-20260928/AP005_14_High_Knee_Stepping_55deg.mp4">Full · 1600 px</option></select></label>
-                <a href="assets/mesh-demos-two-tasks-20260928/AP005_14_High_Knee_Stepping_55deg.mp4" download>Download full video</a>
+                <label>Quality <select class="mesh-quality" aria-label="Video quality for AP005, Heel-to-butt running"><option value="assets/mesh-demos-two-tasks-20260928/AP005_16_Heel_To_Butt_Running_55deg_web.mp4">Web · 960 px</option><option value="assets/mesh-demos-two-tasks-20260928/AP005_16_Heel_To_Butt_Running_55deg.mp4">Full · 1600 px</option></select></label>
+                <a href="assets/mesh-demos-two-tasks-20260928/AP005_16_Heel_To_Butt_Running_55deg.mp4" download>Download full video</a>
               </div>
-              <p class="mesh-demo-caption">2.6 s · Fixed 55° orientation · Recorded movement speed. Full-body and residual-limb meshes share the same camera and scale. One complete right knee raise, shown at the recorded speed.</p>
+              <p class="mesh-demo-caption">3.0 s · Fixed 55° orientation · Recorded movement speed. Full-body and residual-limb meshes share the same camera and scale.</p>
             </article>
             <article class="mesh-demo-card" id="mesh-ap005-n08">
               <div class="mesh-demo-heading">
